@@ -93,3 +93,5 @@ hgtm/
 | University of Michigan Health | 1, 2 | 9 | 8 | 0 | 0 | Validated core |
 | UR Medicine | 1, 2 | 12 | 5 | 0 | 6 | Validated core |
 | UW Medicine | 1, 2 | 10 | 6 | 1 | 2 | Validated core |
+
+Built with Qwen 3.6 27B (MTP) running locally via [Hermes Agent](https://github.com/nousresearch/hermes-agent).
