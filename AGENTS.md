@@ -1,11 +1,11 @@
 # AGENTS.md
 
-Hierarchical Ground Truth Model (HGTM) — US health system hierarchy with validated, typed relationships.
+Hierarchical Structure of Health Systems (HS2) — US health system hierarchy with validated, typed relationships.
 
 ## Project Layout
 
 ```
-hgtm/
+hs2/
 ├── README.md          ← model spec (tiers, relationship types, schemas)
 ├── systems/           ← per health system
 │   ├── um-health/

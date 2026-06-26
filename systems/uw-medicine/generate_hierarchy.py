@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Visualize UW Medicine HGTM hierarchy."""
+"""Visualize UW Medicine HS2 hierarchy."""
 import json
 import networkx as nx
 import matplotlib
@@ -36,7 +36,7 @@ def main():
     y_spacing = 3
     for tier_num, nodes in sorted(tiers.items()):
         n = len(nodes)
-        if tier_num == 2:
+        if tier_num >= 2:
             x_spacing = 8
         else:
             x_spacing = max(3, n * 0.8)
@@ -48,8 +48,8 @@ def main():
     # Draw
     fig, ax = plt.subplots(figsize=(20, 10))
 
-    tier_colors = {0: '#1a1a2e', 1: '#16213e', 2: '#0f3460'}
-    tier_sizes = {0: 4500, 1: 2200, 2: 1800}
+    tier_colors = {0: '#1a1a2e', 1: '#16213e', 2: '#0f3460', 3: '#1a4a5e'}
+    tier_sizes = {0: 4500, 1: 2200, 2: 1800, 3: 1400}
 
     for tier_num in sorted(tiers.keys()):
         nodes_list = [n for n in G.nodes() if G.nodes[n]['tier'] == tier_num]
@@ -129,11 +129,11 @@ def main():
         elif t == 1:
             tier_labels[1] = 'Hospitals / Medical Centers'
         elif t == 2:
-            tier_labels[2] = 'Clinics / Specialty Centers / Ambulatory Care'
+            tier_labels[2] = 'Specialty Centers / Ambulatory Care'
         elif t == 3:
-            tier_labels[3] = 'Satellite Locations / Provider Practices'
+            tier_labels[3] = 'Clinics / Provider Practices'
     tier_label = ' | '.join(f"Tier {k}: {v}" for k, v in sorted(tier_labels.items()))
-    ax.set_title(f'UW Medicine — HGTM Hierarchy\n{tier_label}',
+    ax.set_title(f'UW Medicine — HS2 Hierarchy\n{tier_label}',
                  fontsize=15, fontweight='bold', color='white', pad=20)
 
     ax.set_axis_off()

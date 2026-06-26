@@ -1,4 +1,4 @@
-# Hierarchical Ground Truth Model (HGTM)
+# Hierarchical Structure of Health Systems (HS2)
 
 US Health System hierarchy — validated, typed relationships.
 
@@ -10,8 +10,12 @@ US Health System hierarchy — validated, typed relationships.
 |---|---|---|
 | Root | Health System | University of Michigan Health |
 | Tier 1 | Hospitals / Medical Centers | C.S. Mott Children's Hospital |
-| Tier 2 | Clinics / Specialty Centers / Ambulatory Care | Kellogg Eye Center |
-| Tier 3 | Satellite Locations / Provider Practices | Pediatric Cardiology in Flint |
+| Tier 2 | Specialty Centers / Ambulatory Care Centers | Kellogg Eye Center |
+| Tier 3 | Clinics / Satellite Locations / Provider Practices | UW Medicine Primary Care |
+
+**Tier 2 vs Tier 3 distinction:** Tier 2 = specialty centers with independent brand identity and focused multi-service array (e.g., "Kellogg Eye Center," "Karmanos Cancer Institute"). Tier 3 = general clinics, satellite offices, provider practices — community-level access points with limited service (e.g., "Urology Clinic," "Pediatric Cardiology in Flint"). The dividing line is independent brand identity and service array, not naming convention alone.
+
+**Evidence:** Every major US health system self-describes with this 3-level structure below the system root. UM Health: "3 hospitals, 6 specialty treatment centers and over 50 clinics." Cleveland Clinic: "23 hospitals, 276 outpatient facilities, 18 Family Health and Service Centers." Kaiser: "40 hospitals and 609 medical facilities." See `references/tier-system-research.md` for full research.
 
 ### Relationship Types
 
@@ -68,7 +72,7 @@ Loose affiliations (no contract, no equity) are **not** included.
 ## Structure
 
 ```
-hgtm/
+hs2/
 ├── README.md          ← this file (model spec)
 ├── systems/           ← per health system
 │   ├── um-health/
@@ -92,6 +96,6 @@ hgtm/
 |---|---|---|---|---|---|---|
 | University of Michigan Health | 1, 2 | 9 | 8 | 0 | 0 | Validated core |
 | UR Medicine | 1, 2 | 12 | 5 | 0 | 6 | Validated core |
-| UW Medicine | 1, 2 | 10 | 6 | 1 | 2 | Validated core |
+| UW Medicine | 1, 2, 3 | 10 | 6 | 1 | 2 | Validated core |
 
 Built with Qwen 3.6 27B (MTP) running locally via [Hermes Agent](https://github.com/nousresearch/hermes-agent).

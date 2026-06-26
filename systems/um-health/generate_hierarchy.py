@@ -14,6 +14,7 @@ TITLE_COLOR = '#e6edf3'
 NODE_ROOT = '#1c2541'
 NODE_T1 = '#1a2332'
 NODE_T2 = '#1c3a5e'
+NODE_T3 = '#1a4a5e'
 TEXT = '#ffffff'
 EDGE_OWNS = '#39d353'
 EDGE_MANAGES = '#58a6ff'
@@ -30,15 +31,19 @@ root_id = 'um-health-root'
 # Separate by tier
 tier1 = []  # hospitals
 tier2 = []  # specialty centers
+tier3 = []  # clinics, provider practices
 for rel in relationships:
     target = entities[rel['target']]
     if target.get('tier') == 1:
         tier1.append((rel, target))
     elif target.get('tier') == 2:
         tier2.append((rel, target))
+    elif target.get('tier') == 3:
+        tier3.append((rel, target))
 
 tier1.sort(key=lambda x: x[1]['name'])
 tier2.sort(key=lambda x: x[1]['name'])
+tier3.sort(key=lambda x: x[1]['name'])
 
 fig, ax = plt.subplots(1, 1, figsize=(16, 11), facecolor=BG)
 ax.set_facecolor(BG)
@@ -56,11 +61,11 @@ for e in data['entities']:
     elif t == 1:
         tier_labels[1] = 'Hospitals / Medical Centers'
     elif t == 2:
-        tier_labels[2] = 'Clinics / Specialty Centers / Ambulatory Care'
+        tier_labels[2] = 'Specialty Centers / Ambulatory Care'
     elif t == 3:
-        tier_labels[3] = 'Satellite Locations / Provider Practices'
+        tier_labels[3] = 'Clinics / Provider Practices'
 
-title = 'University of Michigan Health — HGTM Hierarchy'
+title = 'University of Michigan Health — HS2 Hierarchy'
 subtitle_parts = [f'Tier {k}: {v}' for k, v in sorted(tier_labels.items())]
 subtitle = ' | '.join(subtitle_parts)
 ax.text(8, 11.2, title, ha='center', va='top', fontsize=20, fontweight='bold', color=TITLE_COLOR, family='sans-serif')
@@ -115,6 +120,22 @@ for i, (rel, ent) in enumerate(tier2):
     name = short_names.get(ent['name'], ent['name'])
     ax.text(x, t2_y, name, ha='center', va='center', fontsize=10, color=TEXT, family='sans-serif')
 
+# Tier 3: Clinics / Provider Practices (row at y=0.5)
+if tier3:
+    t3_y = 0.5
+    t3_r = 0.35
+    t3_count = len(tier3)
+    t3_spacing = 14 / (t3_count + 1)
+    t3_positions = {}
+
+    for i, (rel, ent) in enumerate(tier3):
+        x = 1 + i * t3_spacing
+        t3_positions[ent['id']] = (x, t3_y)
+        circle = plt.Circle((x, t3_y), t3_r, color=NODE_T3, ec='#30363d', linewidth=1.5)
+        ax.add_patch(circle)
+        name = short_names.get(ent['name'], ent['name'])
+        ax.text(x, t3_y, name, ha='center', va='center', fontsize=9, color=TEXT, family='sans-serif')
+
 # Draw edges
 for rel in relationships:
     target_id = rel['target']
@@ -138,6 +159,8 @@ for rel in relationships:
         tx, ty = t1_positions[target_id]
     elif target_id in t2_positions:
         tx, ty = t2_positions[target_id]
+    elif 't3_positions' in globals() and target_id in t3_positions:
+        tx, ty = t3_positions[target_id]
     else:
         continue
 

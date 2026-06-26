@@ -19,9 +19,10 @@
     },
     "tiers": {
       "tier_1": 4,
-      "tier_2": 5
+      "tier_2": 3,
+      "tier_3": 2
     },
-    "note": "Tier 1: hospitals only. Tier 2: specialty centers, clinic networks, physician groups, services. Valley Medical Center relationship winding down (ends Dec 31, 2026)."
+    "note": "Tier 1: hospitals. Tier 2: specialty centers with independent brand identity. Tier 3: clinic networks, physician groups. Valley Medical Center relationship winding down (ends Dec 31, 2026)."
   },
   "entities": [
     {
@@ -115,7 +116,7 @@
         "state": "WA",
         "zip": "98195"
       },
-      "tier": 2,
+      "tier": 3,
       "note": "Largest physician practice plan in the Pacific Northwest region."
     },
     {
@@ -128,7 +129,7 @@
         "state": "WA",
         "zip": "98101"
       },
-      "tier": 2,
+      "tier": 3,
       "note": "Neighborhood-based primary care clinic network (13+ locations). Also known as UW Neighborhood Clinics."
     },
     {

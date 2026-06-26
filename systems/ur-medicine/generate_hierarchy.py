@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Visualize UR Medicine HGTM hierarchy with improved layout for wide tiers."""
+"""Visualize UR Medicine HS2 hierarchy with improved layout for wide tiers."""
 import json
 import networkx as nx
 import matplotlib
@@ -126,7 +126,7 @@ def main():
         elif t == 3:
             tier_labels[3] = 'Satellite Locations / Provider Practices'
     tier_label = ' | '.join(f"Tier {k}: {v}" for k, v in sorted(tier_labels.items()))
-    ax.set_title(f'UR Medicine (University of Rochester Medical Center) — HGTM Hierarchy\n{tier_label}',
+    ax.set_title(f'UR Medicine (University of Rochester Medical Center) — HS2 Hierarchy\n{tier_label}',
                  fontsize=15, fontweight='bold', color='white', pad=20)
 
     ax.set_axis_off()
