@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1520 1440" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#94a3b8"/>
+    </marker>
+    <style>
+      .title { fill:#f1f5f9; font-size:26px; font-weight:700; }
+      .subtitle { fill:#94a3b8; font-size:14.5px; }
+      .boxtitle { fill:#e2e8f0; font-size:17px; font-weight:600; }
+      .boxsub { fill:#94a3b8; font-size:14px; }
+      .goal1 { fill:#7dd3fc; font-size:12.5px; font-weight:700; letter-spacing:2px; }
+      .goal2 { fill:#e2e8f0; font-size:15.5px; }
+      .body { fill:#cbd5e1; font-size:13.5px; }
+      .mono { fill:#cbd5e1; font-size:13px; font-family:'SF Mono', Menlo, Consolas, monospace; }
+      .mono-sm { fill:#94a3b8; font-size:12.5px; font-family:'SF Mono', Menlo, Consolas, monospace; }
+      .chiplabel { fill:#e2e8f0; font-size:13px; }
+      .chiptitle { fill:#f1f5f9; font-size:16px; font-weight:700; }
+      .chipsub { fill:#94a3b8; font-size:12.5px; }
+      .note { fill:#94a3b8; font-size:13px; font-style:italic; }
+      .tag { fill:#94a3b8; font-size:12.5px; }
+      .accent-sky { fill:#38bdf8; }
+      .accent-amber { fill:#f59e0b; }
+      .accent-emerald { fill:#34d399; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1520" height="1440" fill="#0f172a"/>
+
+  <!-- Title -->
+  <text x="760" y="48" text-anchor="middle" class="title">Legal-Entity Judge — pipeline overview</text>
+  <text x="760" y="76" text-anchor="middle" class="subtitle">NPPES type-2 organizations that look like provider groups → practice_group or legal/billing shell?</text>
+
+  <!-- Goal strip -->
+  <rect x="60" y="104" width="1400" height="64" rx="10" fill="#0d2b45" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="84" y="130" class="goal1">THE ONE QUESTION</text>
+  <text x="84" y="154" class="goal2">Do patient-care locations exist under the entity's own name (legal name or alias), operated as its own practice — not part of a parent system's facilities?</text>
+
+  <line x1="760" y1="168" x2="760" y2="197" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Box 1: INPUT -->
+  <rect x="60" y="196" width="1400" height="150" rx="10" fill="#152238" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="84" y="226" class="boxtitle">1 · INPUT <tspan class="boxsub" font-weight="400">(code — just packaging, no LLM)</tspan></text>
+  <rect x="84" y="240" width="620" height="84" rx="8" fill="#1e293b" stroke="#334155"/>
+  <text x="104" y="264" class="chiplabel" font-weight="600">NPPES record (input)</text>
+  <text x="104" y="288" class="mono">legal_name · aliases[] · npi (type 2) · specialty</text>
+  <text x="104" y="310" class="mono-sm">website (feeds own_site) · practice_location = billing address only</text>
+  <rect x="744" y="240" width="692" height="84" rx="8" fill="#1e293b" stroke="#334155"/>
+  <text x="764" y="264" class="chiplabel" font-weight="600">Web evidence — Firecrawl /v2/search → /v2/scrape</text>
+  <text x="764" y="288" class="mono">evidence[] = { source_url, title, content }</text>
+  <text x="764" y="310" class="mono-sm">≈10 URLs per entity · cached by URL + day</text>
+
+  <line x1="760" y1="346" x2="760" y2="397" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Box 2: TRUST CLASS -->
+  <rect x="60" y="396" width="1400" height="180" rx="10" fill="#152238" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="84" y="426" class="boxtitle">2 · TRUST CLASS <tspan class="boxsub" font-weight="400">(code — ~15 lines, no LLM)</tspan></text>
+  <text x="84" y="452" class="body">trust_class(url, nppes_website) → every evidence item is bucketed deterministically:</text>
+  <rect x="84" y="468" width="300" height="44" rx="8" fill="#1e293b" stroke="#334155"/>
+  <text x="234" y="495" text-anchor="middle" class="chiplabel">gov — .gov/.mil/.cc + registries</text>
+  <rect x="404" y="468" width="300" height="44" rx="8" fill="#1e293b" stroke="#334155"/>
+  <text x="554" y="495" text-anchor="middle" class="chiplabel">own_site — domain == NPPES website</text>
+  <rect x="724" y="468" width="300" height="44" rx="8" fill="#1e293b" stroke="#334155"/>
+  <text x="874" y="495" text-anchor="middle" class="chiplabel">aggregator — known junk blocklist</text>
+  <rect x="1044" y="468" width="300" height="44" rx="8" fill="#1e293b" stroke="#334155"/>
+  <text x="1194" y="495" text-anchor="middle" class="chiplabel">unclassified — long tail (LLM judges)</text>
+  <text x="84" y="548" class="note">No manual tiering: unknown domains default to suspicion, not a missing table row. The one maintained list (aggregators) grows lazily from observed failures.</text>
+
+  <line x1="760" y1="576" x2="760" y2="627" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Box 3: LLM JUDGMENT -->
+  <rect x="60" y="626" width="1400" height="270" rx="10" fill="#241d10" stroke="#f59e0b" stroke-width="2"/>
+  <text x="84" y="656" class="boxtitle">3 · LLM JUDGMENT <tspan class="boxsub" font-weight="400">(the only LLM call)</tspan></text>
+  <text x="1436" y="656" text-anchor="end" class="tag">temperature 0 · prompt_version pinned · 6 calibration examples appended</text>
+  <text x="84" y="686" class="body">System prompt: definitions · the one question · evidence priorities (affiliation → location framing → function → absence) · rules R1–R8</text>
+  <text x="84" y="718" class="body">R1 name discipline — only pages naming this entity (name/alias) count</text>
+  <text x="84" y="746" class="body">R2 parent-only pages prove nothing about the group</text>
+  <text x="84" y="774" class="body">R3 group-run clinics don't change the class (still legal entity)</text>
+  <text x="84" y="802" class="body">R4 every claim must carry a verbatim quote</text>
+  <text x="760" y="718" class="body">R5 absence is not evidence — "no locations" ≠ billing_only</text>
+  <text x="760" y="746" class="body">R6 aggregator-only evidence → inconclusive</text>
+  <text x="760" y="774" class="body">R7 high needs gov OR ≥2 independent domains agreeing</text>
+  <text x="760" y="802" class="body">R8 own_site alone caps confidence at medium</text>
+  <text x="84" y="852" class="mono">→ strict JSON: classification · subtype · has_own_practice_locations · parent_organization · evidence[] (verbatim quotes) · confidence</text>
+
+  <line x1="760" y1="896" x2="760" y2="947" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Box 4: POST-PROCESSOR -->
+  <rect x="60" y="946" width="1400" height="170" rx="10" fill="#152238" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="84" y="976" class="boxtitle">4 · POST-PROCESSOR <tspan class="boxsub" font-weight="400">(code — no LLM, the safety net)</tspan></text>
+  <text x="84" y="1008" class="body">1  quote substring check — every verbatim_quote must literally appear in the page content (hallucination → demote + flag row)</text>
+  <text x="84" y="1040" class="body">2  alias reference check — a non-inconclusive verdict must cite the legal name or an alias (enforces R1)</text>
+  <text x="84" y="1072" class="body">3  R6 / R7 / R8 enforcement — aggregator-only, single-domain, or own_site-only evidence auto-demotes confidence</text>
+  <text x="1436" y="1100" text-anchor="end" class="note">The LLM can be wrong — but not silent, and not dishonest.</text>
+
+  <line x1="760" y1="1116" x2="760" y2="1167" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Verdict strip -->
+  <rect x="60" y="1166" width="1400" height="150" rx="10" fill="#132b22" stroke="#34d399" stroke-width="1.5"/>
+  <text x="84" y="1196" class="boxtitle">VERDICT</text>
+  <text x="1436" y="1196" text-anchor="end" class="tag">confidence = high / medium / low — from convergence, not tier arithmetic</text>
+  <rect x="84" y="1210" width="520" height="80" rx="8" fill="#1e293b" stroke="#334155"/>
+  <text x="344" y="1242" text-anchor="middle" class="chiptitle">legal_billing_entity</text>
+  <text x="344" y="1266" text-anchor="middle" class="chipsub">health_system_group · affiliated_specialty_group · billing_only</text>
+  <rect x="644" y="1210" width="380" height="80" rx="8" fill="#1e293b" stroke="#334155"/>
+  <text x="834" y="1242" text-anchor="middle" class="chiptitle">practice_group</text>
+  <text x="834" y="1266" text-anchor="middle" class="chipsub">has_own_practice_locations: true</text>
+  <rect x="1064" y="1210" width="372" height="80" rx="8" fill="#1e293b" stroke="#334155"/>
+  <text x="1250" y="1242" text-anchor="middle" class="chiptitle">inconclusive</text>
+  <text x="1250" y="1266" text-anchor="middle" class="chipsub">absence alone never verdicts</text>
+
+  <!-- Legend -->
+  <rect x="60" y="1352" width="20" height="20" rx="4" fill="#152238" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="90" y="1367" class="tag">deterministic code — no LLM tokens</text>
+  <rect x="360" y="1352" width="20" height="20" rx="4" fill="#241d10" stroke="#f59e0b" stroke-width="2"/>
+  <text x="390" y="1367" class="tag">the only LLM call</text>
+  <rect x="560" y="1352" width="20" height="20" rx="4" fill="#132b22" stroke="#34d399" stroke-width="1.5"/>
+  <text x="590" y="1367" class="tag">verdict states</text>
+</svg>
