@@ -15,6 +15,7 @@
       "medium": 1
     },
     "tiers": {
+      "tier_0": 1,
       "tier_1": 5,
       "tier_2": 4
     },
@@ -214,7 +215,7 @@
         "wikipedia"
       ],
       "verified_at": "2026-06-27",
-      "note": "Affiliated December 2016, rebranded September 2021. Affiliated relationship — UM Health does not own Metro Health. Public sources use 'affiliated with' language."
+      "note": "Affiliated December 2016, rebranded September 2021. Affiliated relationship \u2014 UM Health does not own Metro Health. Public sources use 'affiliated with' language."
     },
     {
       "source": "university-hospital",

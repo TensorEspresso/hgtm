@@ -16,6 +16,7 @@
       "medium": 1
     },
     "tiers": {
+      "tier_0": 1,
       "tier_1": 4,
       "tier_2": 3
     },
@@ -49,7 +50,7 @@
         "state": "WA",
         "zip": "98195"
       },
-      "note": "Main academic teaching hospital, First Hill campus. 570+ beds."
+      "note": "Main academic teaching hospital on the Montlake campus. 600+ beds."
     },
     {
       "id": "uwmc-northwest",
@@ -101,7 +102,7 @@
         "state": "WA",
         "zip": "98109"
       },
-      "note": "Independent nonprofit (spun off from UW in 2021). Serves as UW Medicine's cancer program."
+      "note": "Independent nonprofit (founded 1975, never part of UW). Merged with SCCA in 2022; serves as UW Medicine's cancer program."
     },
     {
       "id": "scca",
@@ -127,6 +128,7 @@
         "state": "WA",
         "zip": "98108"
       },
+      "service_area": "WWAMI region",
       "note": "UW Medicine affiliate. Aviation services operated by Air Methods since 2015. 3,600+ patient transports annually across WWAMI region."
     }
   ],
@@ -192,7 +194,7 @@
         "wikipedia"
       ],
       "verified_at": "2026-06-26",
-      "note": "Independent nonprofit. Spun off from UW in 2021. Clinically integrated into UW Medicine but separate governance."
+      "note": "Independent nonprofit (founded 1975, never part of UW). Merged with SCCA in 2022; serves as UW Medicine's cancer program with separate governance."
     },
     {
       "source": "uw-medicine-root",

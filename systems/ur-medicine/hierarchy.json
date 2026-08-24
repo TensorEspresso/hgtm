@@ -8,17 +8,15 @@
     "total_relationships": 11,
     "by_relationship_type": {
       "owns": 5,
-      "manages": 0,
       "partners_with": 6
     },
     "by_confidence": {
-      "high": 7,
-      "medium": 4,
-      "low": 0,
-      "inferred": 0
+      "high": 5,
+      "medium": 6
     },
     "tiers": {
-      "tier_1": 8,
+      "tier_0": 1,
+      "tier_1": 9,
       "tier_2": 2
     },
     "note": "Tier 1: hospitals (3 owned + 5 affiliate). Tier 2: specialty centers on Strong Memorial campus. Affiliate hospitals retain separate governance/EIN but receive operational oversight from UR Medicine."

@@ -8,7 +8,7 @@ US Health System hierarchy — validated, typed relationships.
 
 | Tier | Entity Type | Example |
 |---|---|---|
-| Root | Health System | University of Michigan Health |
+| Tier 0 | Health System (root) | University of Michigan Health |
 | Tier 1 | Hospitals / Medical Centers | C.S. Mott Children's Hospital |
 | Tier 2 | Specialty Centers / Ambulatory Care Centers | Kellogg Eye Center |
 | Tier 3 | Clinics / Satellite Locations / Provider Practices | UW Medicine Primary Care |
@@ -50,12 +50,29 @@ Loose affiliations (no contract, no equity) are **not** included.
     "state": "...",
     "zip": "..."
   },
+  "addresses": [
+    {
+      "label": "Optional site label (unique per entity)",
+      "street": "...",
+      "city": "...",
+      "state": "...",
+      "zip": "..."
+    }
+  ],
+  "service_area": "Optional geographic footprint (e.g. \"WWAMI region\")",
   "brand_id": "Epic FHIR brand UUID (optional)",
   "epic_id": "Epic system ID (optional)",
   "fhir_endpoint": "Epic FHIR proxy URL (optional)",
-  "note": "Optional context"
+  "note": "Required context"
 }
 ```
+
+**Addressing rules:**
+
+- `address` = primary site (HQ for the system root). **Required** for physical types: `health_system`, `hospital`, `specialty_center`, `clinic`, `air_ambulance`. **Omitted** (absent, not null/empty) for non-physical types: `physician_group`, `clinic_network`, `program`, `brand`. Unknown types: warn only.
+- `addresses` (optional) = additional sites for multi-address entities. Each entry carries the same street/city/state/zip quartet plus an optional `label` (must be unique per entity). Entries must not duplicate the primary `address`.
+- `service_area` (optional string) = geographic footprint for entities whose reach is regional rather than fixed-site (e.g. `"WWAMI region"`). The natural counterpart for non-physical entities; also valid alongside a single HQ address (e.g. Airlift Northwest: HQ address + `service_area`).
+- Locations that are organizations in their own right (clinics, satellites, provider practices) are modeled as **Tier 3 entities**, never as bare address entries. Address data describes where an entity operates; it does not create entities.
 
 ### Relationship Schema
 
@@ -78,26 +95,25 @@ hs2/
 ├── README.md          ← this file (model spec)
 ├── systems/           ← per health system
 │   ├── um-health/
-│   │   ├── hierarchy.json
-│   │   ├── hierarchy.png
-│   │   └── generate_hierarchy.py
+│   │   └── hierarchy.json
+│   │   └── hierarchy.png
 │   ├── ur-medicine/
-│   │   ├── hierarchy.json
-│   │   ├── hierarchy.png
-│   │   └── generate_hierarchy.py
+│   │   └── hierarchy.json
+│   │   └── hierarchy.png
 │   └── uw-medicine/
-│       ├── hierarchy.json
-│       ├── hierarchy.png
-│       └── uw-medicine-hierarchy-report.md
+│       └── hierarchy.json
+│       └── hierarchy.png
 └── tools/             ← reusable scripts
+    ├── generate_hierarchy.py
+    └── validate_hierarchy.py
 ```
 
 ## Status
 
 | Health System | Tiers | Entities | Owns | Manages | Partners | Status |
 |---|---|---|---|---|---|---|
-| University of Michigan Health | 1, 2 | 9 | 8 | 0 | 0 | Validated core |
-| UR Medicine | 1, 2 | 12 | 5 | 0 | 6 | Validated core |
-| UW Medicine | 1, 2, 3 | 10 | 6 | 1 | 2 | Validated core |
+| University of Michigan Health | 1,2 | 10 | 8 | 1 | 0 | Validated core |
+| UR Medicine | 1,2 | 12 | 5 | 0 | 6 | Validated core |
+| UW Medicine | 1,2 | 8 | 3 | 1 | 3 | Validated core |
 
 Built with Qwen 3.6 27B (MTP) running locally via [Hermes Agent](https://github.com/nousresearch/hermes-agent).
