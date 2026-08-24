@@ -32,6 +32,8 @@ The single test the judge applies:
 
 **`practice_group`** — the organization *is* a patient-facing practice: providers practice in locations operated under the organization's own name, not a physician/billing construct of a larger system. (A valid class, not a rejection.)
 
+**Deterministic pre-judge gate — NPPES subpart flag.** If the NPPES record shows `Organization Subpart: YES` *and* a named `Parent Organization Legal Business Name`, the class question is **pre-settled by the registry** (a `gov` source → `high` under R7); the web stage is *not* the load-bearing basis for the class verdict. The subpart flag + named parent *is* the explicit affiliation language. If a web stage runs at all, it only handles **subtype disambiguation** and **location framing** (`has_own_practice_locations: true|false`) — never the class itself. This is one of the cleanest deterministic signals in the record; do not spend web credits re-deriving what the registry already states. (Runs upstream of the LLM judge — not part of the Call C prompt, so `prompt_version` is unchanged.)
+
 ---
 
 ## Source Trust Model (v2 — no manual tiering)
@@ -296,6 +298,12 @@ Classify the entity. Return JSON only.
 - E1 (own_site, source_type `official_entity_site`, primary): "About — X Medical Group is the physician organization of Y Health System. Our physicians provide care at Y Medical Center."
 - No other source references the group. Verdict: high blocked by R8 → medium, third-party corroboration queued.
 
+**G → `legal_billing_entity` / `health_system_group`, high — name-collision + abbreviated-alias shape (registry settles the class).**
+- NPPES (gov): legal name "Montefiore Medical Center," alias "MMC-FACULTY PRACTICE," taxonomy Multi-Specialty Group, **Organization Subpart: YES**, Parent Organization Legal Business Name "Montefiore Medical Center."
+- The legal name collides with the parent brand (a degenerate "alias = parent brand"). R2 keeps every "Montefiore has N hospitals" page from counting as *group* evidence.
+- Web (alias search): a registry-copy directory re-printing the subpart flag; LinkedIn ("Montefiore's Faculty Practice Group… a network of 200+ physician practices"); a Zocdoc auto-generated "Book Appointment" page.
+- Verdict: the subpart gate pre-settles the class at `high` (gov, R7) — the web is **corroboration only** (aggregators, R6; the Zocdoc page is a false `practice_group` lure, not location framing). What the web *does* contribute: (a) the live name "Montefiore Einstein Faculty Practice Group" → **queue an alias-update candidate**; (b) location framing — providers practice at Moses Campus / Moses Division Hospital, i.e. the *system's* facilities → `has_own_practice_locations: false`; (c) a near-collision warning — a sibling billing entity "Montefiore Medical Group" (R1 keeps them distinct). Subtype `health_system_group`, parent "Montefiore Medical Center."
+
 ---
 
 ## Post-Processor Checks (deterministic, pure Python)
@@ -315,5 +323,6 @@ Classify the entity. Return JSON only.
 - **Self-certifying pages**: a group's own site claiming "official/authoritative" status. The anti-self-certification rule in the structural-judgment section is the defense; sample-audit `official_entity_site` judgments to confirm the LLM isn't swayed by page rhetoric.
 - **LLM quality drift**: same domain judged `primary` in one run, `weak` in another. Mitigations: temperature 0, pinned prompt version, per-item quality logged, weekly sample audit. Persistent misjudgment on a domain → add to `AGGREGATORS` or handle specially (lazy list growth).
 - **Rebranded groups**: group renamed; current web only knows the new name. If the old name is dead and the new name is a practice → `inconclusive` on the *old* record, and queue an alias-update candidate (do not silently re-classify).
+- **Abbreviated alias vs. expanded live brand (Montefiore FPG shape).** NPPES alias `MMC-FACULTY PRACTICE`; the web only knows it as "Montefiore Einstein Faculty Practice Group." R1's mechanical normalization (case / punctuation / suffix / whitespace) cannot bridge *abbreviation expansion* or *rebrand terms*, so a strict web-only run lands `inconclusive` even though the evidence is present and correct. **Mitigation: upstream (pre-judge) deterministic alias enrichment** — generate expanded variants (e.g., `MMC`→`Montefiore`, `FPG`→`Faculty Practice Group`, + live rebrand terms) and pass the *enriched* alias list into the prompt; R1 stays mechanical and simply matches a better list. Do not loosen R1's normalization to do LLM-ish expansion. If the old name is dead and the expanded name is live, also queue an alias-update candidate.
 - **Dormant TINs**: defunct groups with no web footprint at all → `inconclusive`, never `billing_only` (R5). Downstream, cross-check against a "still billing" signal (recent CMS payment activity) before final labeling.
 - **NPPES website field gap**: if the bulk extract lacks the website field, `own_site` never fires and the entity's site lands in `unclassified` where it's usually still classified `official_entity_site` — no functional loss, only the R8 cap loosens to the R7 single-domain cap.
