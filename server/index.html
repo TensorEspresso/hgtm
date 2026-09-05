@@ -130,8 +130,9 @@
           name: 'Partnerships & Affiliations', type: 'org', tier: 1,
           description: 'Shared ownership and governance with external organizations.',
           children: [
-            { name: 'Seattle Cancer Care Alliance (SCCA)', type: 'partner', tier: 2, address: '850 Fairview Ave N, Seattle, WA 98109', description: 'Partnership between UW Medicine, Fred Hutchinson Cancer Research Center, and Seattle Children\'s. Now merged into Fred Hutchinson Cancer Center.' },
-            { name: 'Fred Hutchinson Cancer Center', type: 'partner', tier: 2, address: '1100 Fairview Avenue N, Seattle, WA 98109', description: 'Independent, nonprofit cancer center. Merged with SCCA. Also serves as UW Medicine\'s cancer program. NCI-designated.' },
+            { name: 'Fred Hutchinson Cancer Center', type: 'partner', tier: 2, address: '1100 Fairview Avenue N, Seattle, WA 98109', description: 'Independent, nonprofit cancer center (founded 1975). Merged with SCCA in 2022. NCI-designated. Serves as UW Medicine\'s cancer program.', children: [
+              { name: 'Seattle Cancer Care Alliance (SCCA)', type: 'partner', tier: 3, address: '850 Fairview Ave N, Seattle, WA 98109', description: 'Former joint venture of UW Medicine, Fred Hutch, and Seattle Children\'s. Merged into Fred Hutchinson Cancer Center in 2022.' }
+            ]},
             { name: 'Children\'s University Medical Group (CUMG)', type: 'partner', tier: 2, address: 'Seattle, WA', description: 'Not-for-profit physician group supporting Seattle Children\'s Hospital and UW School of Medicine in pediatric care, charitable, educational, and scientific missions.' }
           ]
         },
