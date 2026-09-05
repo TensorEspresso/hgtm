@@ -95,14 +95,17 @@ hs2/
 ├── README.md          ← this file (model spec)
 ├── systems/           ← per health system
 │   ├── um-health/
-│   │   └── hierarchy.json
+│   │   ├── hierarchy.json
 │   │   └── hierarchy.png
 │   ├── ur-medicine/
-│   │   └── hierarchy.json
+│   │   ├── hierarchy.json
 │   │   └── hierarchy.png
 │   └── uw-medicine/
-│       └── hierarchy.json
+│       ├── hierarchy.json
 │       └── hierarchy.png
+├── server/            ← interactive explorer (FastAPI + embedded data)
+│   ├── app.py         ← serves /api/hierarchy from systems/uw-medicine/
+│   └── index.html     ← collapsible org tree, detail panels
 └── tools/             ← reusable scripts
     ├── generate_hierarchy.py
     └── validate_hierarchy.py
@@ -115,5 +118,24 @@ hs2/
 | University of Michigan Health | 1,2 | 10 | 8 | 1 | 0 | Validated core |
 | UR Medicine | 1,2 | 12 | 5 | 0 | 6 | Validated core |
 | UW Medicine | 1,2 | 8 | 3 | 1 | 3 | Validated core |
+
+
+---
+
+## Interactive Explorer
+
+The `server/` directory contains a self-contained interactive explorer for the UW Medicine hierarchy.
+
+```
+python3 server/app.py
+```
+
+- **Endpoint:** `http://localhost:8646`
+- **API:** `GET /api/hierarchy` → returns `systems/uw-medicine/hierarchy.json`
+- **UI:** Single-page collapsible org tree — click **+** below any node to expand its children, click the node body for detail panel with address, phone, description, and sub-locations.
+
+The HTML embeds the full org tree data (35+ nodes including 13 neighborhood clinics, 6 WWAMI campuses, partnerships) on top of the validated `hierarchy.json` graph data (8 entities, 7 typed relationships).
+
+---
 
 Built with Qwen 3.6 27B (MTP) running locally via [Hermes Agent](https://github.com/nousresearch/hermes-agent).

@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UW Medicine Hierarchy Explorer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root { --card: #1e293b; --foreground: #e2e8f0; --accent: #38bdf8; --border: #334155; }
+    body { background: #0f172a; color: var(--foreground); font-family: system-ui, -apple-system, sans-serif; margin: 0; }
+    .detail-panel {
+      position: fixed; right: 0; top: 0; height: 100vh; width: 400px;
+      background: var(--card); border-left: 1px solid var(--border);
+      transform: translateX(100%); transition: transform 0.25s ease;
+      z-index: 50; overflow-y: auto;
+    }
+    .detail-panel.open { transform: translateX(0); }
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+    .badge.health_system { background: #38bdf8; color: #0c4a6e; }
+    .badge.hospital { background: #4ade80; color: #052e16; }
+    .badge.specialty_center { background: #c084fc; color: #2e1065; }
+    .badge.air_ambulance { background: #fb923c; color: #431407; }
+    .badge.org { background: #60a5fa; color: #1e3a5f; }
+    .badge.clinic { background: #4ade80; color: #052e16; }
+    .badge.partner { background: #f87171; color: #450a0a; }
+    .badge.research { background: #facc15; color: #422006; }
+    .badge.education { background: #2dd4bf; color: #042f2e; }
+    .badge.transport { background: #fb923c; color: #431407; }
+    .node-rect { cursor: pointer; transition: filter 0.15s; }
+    .node-rect:hover { filter: brightness(1.3); }
+    .tier-0 { fill: #38bdf8; }
+    .tier-1 { fill: #4ade80; }
+    .tier-2 { fill: #c084fc; }
+    .tier-3 { fill: #60a5fa; }
+    .tier-4 { fill: #2dd4bf; }
+    .expand-btn { cursor: pointer; user-select: none; font-size: 14px; }
+    .expand-btn:hover { fill: #fff; }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- Header -->
+  <header class="fixed top-0 left-0 right-0 z-40 px-6 py-3 border-b border-slate-700 bg-slate-900/95 backdrop-blur">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div>
+        <h1 class="text-xl font-bold text-white">UW Medicine Hierarchy</h1>
+        <p class="text-sm text-slate-400">Academic Health System · WWAMI Region</p>
+      </div>
+      <div id="statsBar" class="flex items-center gap-4 text-xs text-slate-300"></div>
+    </div>
+  </header>
+
+  <!-- Detail Panel -->
+  <div class="detail-panel" id="detailPanel">
+    <button onclick="closeDetail()" class="sticky top-0 right-0 p-3 text-slate-400 hover:text-white text-xl">✕</button>
+    <div id="detailContent" class="p-6 pt-2"></div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="pt-24 pb-8 px-6 overflow-auto min-h-screen">
+    <div class="max-w-7xl mx-auto">
+      <svg id="treeSvg" class="w-full"></svg>
+    </div>
+  </div>
+
+  <script>
+    // ─── Data ────────────────────────────────────────────────────────────
+    const hierarchyData = {
+      name: 'UW Medicine', type: 'health_system', tier: 0,
+      address: '1959 NE Pacific St, Seattle, WA 98195',
+      description: 'Integrated clinical, research, and learning health system. CEO: Tim Dellit. Executive VP Medical Affairs & Dean of the School of Medicine.',
+      children: [
+        {
+          name: 'Hospitals & Clinics', type: 'org', tier: 1,
+          description: 'Led by Brad Simmons, President - Hospitals and Clinics and Senior Vice President for Medical Affairs.',
+          children: [
+            { name: 'Harborview Medical Center', type: 'hospital', tier: 2, address: '325 9th Ave, Seattle, WA 98104', phone: '(206) 744-9535', description: 'Level I trauma center. Renowned for emergency care and elective surgery. Owned by King County, operated by UW Medicine.' },
+            { name: 'UW Medical Center – Montlake', type: 'hospital', tier: 2, address: '1959 NE Pacific St, Seattle, WA 98195', phone: '(206) 598-3300', description: '910 beds (Montlake + Northwest combined), 8,981 employees. Home to the Health Sciences Center, UW School of Medicine, UW School of Dentistry, and Fred Hutch inpatient facility.', children: [
+              { name: 'Fred Hutch Cancer Center (Inpatient)', type: 'research', tier: 3, address: '1959 NE Pacific St, Seattle, WA 98195 (inside UWMC-Montlake)', description: '20-bed inpatient hospital physically located inside UWMC-Montlake. Independent nonprofit that serves as UW Medicine\'s cancer program.' }
+            ]},
+            { name: 'UW Medical Center – Northwest', type: 'hospital', tier: 2, address: '1550 North 115th Street, Seattle, WA 98133', phone: '(206) 364-0500', description: '44-acre campus in North Seattle. Includes Frank Chopp Center for Behavioral Health, Northwest Outpatient Medical Center, and Specialty Care Meridian Pavilion.' },
+            { name: 'Valley Medical Center', type: 'hospital', tier: 2, address: '14410 SE Petrovitsky Rd, Renton, WA 98059', phone: '(425) 272-1400', description: 'Serves the South Sound region with comprehensive medical and surgical services. Owned by Public Hospital District No. 1. Strategic alliance ending Dec 31, 2026.' }
+          ]
+        },
+        {
+          name: 'UW Physicians', type: 'org', tier: 1,
+          address: '1959 NE Pacific St Fl 2, Seattle, WA 98195', phone: '(206) 543-6420',
+          description: 'Physician practice group. President: T.H. Dellit (also CEO of UW Medicine). NPI: 1407291446 / 1811332539.'
+        },
+        {
+          name: 'UW Neighborhood Clinics', type: 'org', tier: 1,
+          description: 'Network of community-based primary and urgent care clinics. See more than 1.3 million patients each year.',
+          children: [
+            { name: 'Ballard', type: 'clinic', tier: 2, address: '1455 NW Leary Way Ste 250, Seattle, WA 98107', phone: '(206) 789-7777', description: 'Primary care and urgent care. Open Monday to Saturday.' },
+            { name: 'Northgate', type: 'clinic', tier: 2, address: '314 NE Thornton Place, Seattle, WA 98125', phone: '(206) 528-8000', description: 'Along I-5 near Northgate Transit Center. Primary care six days a week, urgent care seven days.' },
+            { name: 'Ravenna', type: 'clinic', tier: 2, address: '4915 25th Ave NE #300, Seattle, WA 98105', phone: '(206) 525-7777', description: 'Just north of University Village.' },
+            { name: 'Factoria', type: 'clinic', tier: 2, address: '13231 SE 36th St #110, Bellevue, WA 98006', phone: '(206) 957-9000', description: 'Primary care in Bellevue/Factoria area.' },
+            { name: 'Belltown', type: 'clinic', tier: 2, address: 'Seattle, WA', phone: '(206) 443-0400', description: 'Pediatric and primary care in Belltown district.' },
+            { name: 'Federal Way', type: 'clinic', tier: 2, address: 'Federal Way, WA', phone: '(253) 520-1799', description: 'Primary care in Federal Way.' },
+            { name: 'Fremont', type: 'clinic', tier: 2, address: 'Seattle, WA', phone: '(206) 545-9300', description: 'Primary care in Fremont.' },
+            { name: 'Issaquah', type: 'clinic', tier: 2, address: 'Issaquah, WA', phone: '(425) 391-3900', description: 'Primary care in Issaquah.' },
+            { name: 'Kent–Des Moines', type: 'clinic', tier: 2, address: 'Kent / Des Moines, WA', phone: '(206) 870-8880', description: 'Primary care in Kent/Des Moines.' },
+            { name: 'Olympia', type: 'clinic', tier: 2, address: 'Olympia, WA', phone: '(360) 507-9100', description: 'Primary care in Olympia.' },
+            { name: 'Lake Forest Park', type: 'clinic', tier: 2, address: 'Lake Forest Park, WA', phone: '(206) 668-8272', description: 'Primary care in Lake Forest Park.' },
+            { name: 'Shoreline', type: 'clinic', tier: 2, address: 'Shoreline, WA', phone: '(206) 542-5656', description: 'Primary care in Shoreline.' },
+            { name: 'Woodinville', type: 'clinic', tier: 2, address: 'Woodinville, WA', phone: '(425) 485-4100', description: 'Primary care in Woodinville.' }
+          ]
+        },
+        {
+          name: 'School of Medicine', type: 'education', tier: 1,
+          address: '1959 NE Pacific St, Seattle, WA 98195',
+          description: 'Founded 1946. Dean: Tim Dellit. 1,800 faculty, 957 students. WWAMI program spans WA, WY, AK, MT, ID.',
+          children: [
+            {
+              name: 'WWAMI Program', type: 'education', tier: 2,
+              address: 'Multi-state',
+              description: 'Washington, Wyoming, Alaska, Montana, Idaho — six campuses across five states.',
+              children: [
+                { name: 'Seattle Campus', type: 'education', tier: 3, address: 'Seattle, WA', description: 'UW partner. Class size: 100.' },
+                { name: 'Spokane Campus', type: 'education', tier: 3, address: 'Spokane, WA', description: 'Gonzaga University partner. Class size: 60.' },
+                { name: 'Laramie Campus', type: 'education', tier: 3, address: 'Laramie, WY', description: 'University of Wyoming partner. Class size: 20.' },
+                { name: 'Anchorage Campus', type: 'education', tier: 3, address: 'Anchorage, AK', description: 'University of Alaska Anchorage partner. Class size: 30.' },
+                { name: 'Bozeman Campus', type: 'education', tier: 3, address: 'Bozeman, MT', description: 'Montana State University partner. Class size: 30.' },
+                { name: 'Moscow Campus', type: 'education', tier: 3, address: 'Moscow, ID', description: 'University of Idaho partner. Class size: 40.' }
+              ]
+            }
+          ]
+        },
+        {
+          name: 'Partnerships & Affiliations', type: 'org', tier: 1,
+          description: 'Shared ownership and governance with external organizations.',
+          children: [
+            { name: 'Seattle Cancer Care Alliance (SCCA)', type: 'partner', tier: 2, address: '850 Fairview Ave N, Seattle, WA 98109', description: 'Partnership between UW Medicine, Fred Hutchinson Cancer Research Center, and Seattle Children\'s. Now merged into Fred Hutchinson Cancer Center.' },
+            { name: 'Fred Hutchinson Cancer Center', type: 'partner', tier: 2, address: '1100 Fairview Avenue N, Seattle, WA 98109', description: 'Independent, nonprofit cancer center. Merged with SCCA. Also serves as UW Medicine\'s cancer program. NCI-designated.' },
+            { name: 'Children\'s University Medical Group (CUMG)', type: 'partner', tier: 2, address: 'Seattle, WA', description: 'Not-for-profit physician group supporting Seattle Children\'s Hospital and UW School of Medicine in pediatric care, charitable, educational, and scientific missions.' }
+          ]
+        },
+        {
+          name: 'Airlift Northwest', type: 'transport', tier: 1,
+          address: '6505 Perimeter Road South, Suite 200, Seattle, WA 98108', phone: '(206) 521-1599',
+          description: 'Air medical transport for Washington, Alaska, Montana, Idaho, and Oregon. Founded 1982. Flies 4,500+ patients annually. Aviation services operated by Air Methods since 2015.'
+        }
+      ]
+    };
+
+    // ─── State ───────────────────────────────────────────────────────────
+    const expanded = new Set(); // node paths that are expanded
+    const nodeWidth = 200;
+    const nodeHeight = 56;
+    const hGap = 40; // horizontal gap between siblings
+    const vGap = 80; // vertical gap between levels
+
+    // ─── Layout ──────────────────────────────────────────────────────────
+    // Calculate the number of visible leaf slots a subtree occupies
+    function getLeafCount(node, path) {
+      const nodePath = path + '/' + node.name;
+      if (node.children && node.children.length > 0 && expanded.has(nodePath)) {
+        return node.children.reduce((sum, child) => sum + getLeafCount(child, nodePath), 0);
+      }
+      return 1;
+    }
+
+    function layout(node, x, y, path) {
+      const nodePath = path + '/' + node.name;
+      node._x = x;
+      node._y = y;
+      node._path = nodePath;
+
+      if (node.children && node.children.length > 0 && expanded.has(nodePath)) {
+        // Total width occupied by this subtree's visible leaves
+        const totalLeaves = node.children.reduce((sum, child) => sum + getLeafCount(child, nodePath), 0);
+        const totalWidth = totalLeaves * (nodeWidth + hGap) - hGap;
+        let childX = x + nodeWidth/2 - totalWidth/2;
+
+        node.children.forEach(child => {
+          layout(child, childX, y + nodeHeight + vGap, nodePath);
+          const childLeaves = getLeafCount(child, nodePath);
+          childX += childLeaves * (nodeWidth + hGap);
+        });
+      }
+    }
+
+    // ─── Rendering ───────────────────────────────────────────────────────
+    function renderTree() {
+      const svg = document.getElementById('treeSvg');
+      svg.innerHTML = '';
+
+      // Compute layout
+      layout(hierarchyData, 0, 0, '');
+
+      // Compute bounds of visible nodes
+      let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+      function updateBounds(node) {
+        const nx = node._x - nodeWidth/2, ny = node._y - nodeHeight/2;
+        const nw = node._x + nodeWidth/2, nh = node._y + nodeHeight/2;
+        if (nx < minX) minX = nx;
+        if (nw > maxX) maxX = nw;
+        if (ny < minY) minY = ny;
+        if (nh > maxY) maxY = nh;
+        if (node.children && node.children.length > 0) {
+          const nodePath = node._path;
+          if (expanded.has(nodePath)) {
+            node.children.forEach(updateBounds);
+          }
+        }
+      }
+      updateBounds(hierarchyData);
+
+      const padding = 60;
+      const width = (maxX - minX) + padding * 2;
+      const height = (maxY - minY) + padding * 2;
+      const offsetX = -minX + padding;
+      const offsetY = -minY + padding;
+
+      svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+      svg.setAttribute('width', width);
+      svg.setAttribute('height', height);
+
+      // Render links first (behind)
+      const linksG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      function renderLinks(node) {
+        if (node.children && node.children.length > 0) {
+          const nodePath = node._path;
+          if (expanded.has(nodePath)) {
+            node.children.forEach(child => {
+              const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+              const x1 = node._x + offsetX, y1 = node._y + nodeHeight/2 + offsetY;
+              const x2 = child._x + offsetX, y2 = child._y - nodeHeight/2 + offsetY;
+              const midY = (y1 + y2) / 2;
+              path.setAttribute('d', `M ${x1} ${y1} C ${x1} ${midY}, ${x2} ${midY}, ${x2} ${y2}`);
+              path.setAttribute('stroke', '#475569');
+              path.setAttribute('stroke-width', '2');
+              path.setAttribute('fill', 'none');
+              path.setAttribute('opacity', '0.5');
+              linksG.appendChild(path);
+              renderLinks(child);
+            });
+          }
+        }
+      }
+      renderLinks(hierarchyData);
+      svg.appendChild(linksG);
+
+      // Render nodes
+      const nodesG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      function renderNode(node) {
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        g.style.cursor = 'pointer';
+
+        const hasChildren = node.children && node.children.length > 0;
+        const isExpanded = hasChildren && expanded.has(node._path);
+
+        // Node rect
+        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        rect.setAttribute('x', node._x - nodeWidth/2 + offsetX);
+        rect.setAttribute('y', node._y - nodeHeight/2 + offsetY);
+        rect.setAttribute('width', nodeWidth);
+        rect.setAttribute('height', nodeHeight);
+        rect.setAttribute('rx', 8);
+        rect.setAttribute('class', `node-rect tier-${node.tier || 0}`);
+        rect.setAttribute('stroke', '#475569');
+        rect.setAttribute('stroke-width', '1');
+
+        // Name text
+        const name = node.name.length > 26 ? node.name.slice(0, 24) + '…' : node.name;
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', node._x + offsetX);
+        text.setAttribute('y', node._y - 8 + offsetY);
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('fill', '#fff');
+        text.setAttribute('font-size', '12');
+        text.setAttribute('font-weight', '600');
+        text.textContent = name;
+
+        // Type subtext
+        const sub = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        sub.setAttribute('x', node._x + offsetX);
+        sub.setAttribute('y', node._y + 10 + offsetY);
+        sub.setAttribute('text-anchor', 'middle');
+        sub.setAttribute('fill', '#94a3b8');
+        sub.setAttribute('font-size', '10');
+        sub.textContent = (node.type || '').replace(/_/g, ' ');
+
+        g.appendChild(rect);
+        g.appendChild(text);
+        g.appendChild(sub);
+
+        // Expand/collapse button
+        if (hasChildren) {
+          const btn = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+          btn.setAttribute('class', 'expand-btn');
+
+          const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          circle.setAttribute('cx', node._x + offsetX);
+          circle.setAttribute('cy', node._y + nodeHeight/2 + 12 + offsetY);
+          circle.setAttribute('r', 10);
+          circle.setAttribute('fill', '#334155');
+          circle.setAttribute('stroke', '#475569');
+          circle.setAttribute('stroke-width', '1');
+
+          const btnText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          btnText.setAttribute('x', node._x + offsetX);
+          btnText.setAttribute('y', node._y + nodeHeight/2 + 16 + offsetY);
+          btnText.setAttribute('text-anchor', 'middle');
+          btnText.setAttribute('fill', '#fff');
+          btnText.setAttribute('font-size', '11');
+          btnText.setAttribute('font-weight', '700');
+          btnText.textContent = isExpanded ? '−' : '+';
+
+          btn.appendChild(circle);
+          btn.appendChild(btnText);
+
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleNode(node._path);
+          });
+          g.appendChild(btn);
+        }
+
+        // Click handler for detail
+        g.addEventListener('click', (e) => {
+          if (e.target === rect || e.target === text || e.target === sub) {
+            e.stopPropagation();
+            showDetail(node);
+          }
+        });
+
+        g.addEventListener('mouseenter', () => { g.style.transform = 'translateY(-2px)'; });
+        g.addEventListener('mouseleave', () => { g.style.transform = ''; });
+
+        nodesG.appendChild(g);
+
+        // Recurse into children if expanded
+        if (hasChildren && isExpanded) {
+          node.children.forEach(child => {
+            nodesG.appendChild(renderNode(child));
+          });
+        }
+        return g;
+      }
+
+      nodesG.appendChild(renderNode(hierarchyData));
+      svg.appendChild(nodesG);
+    }
+
+    // ─── Interaction ─────────────────────────────────────────────────────
+    function toggleNode(path) {
+      if (expanded.has(path)) {
+        expanded.delete(path);
+      } else {
+        expanded.add(path);
+      }
+      renderTree();
+    }
+
+    function showDetail(node) {
+      const panel = document.getElementById('detailPanel');
+      const content = document.getElementById('detailContent');
+
+      const typeLabel = {
+        health_system: 'Health System', hospital: 'Hospital', org: 'Organization',
+        clinic: 'Clinic', partner: 'Partner', research: 'Research',
+        education: 'Education', transport: 'Transport'
+      }[node.type] || node.type;
+
+      content.innerHTML = `
+        <div class="space-y-5">
+          <div>
+            <span class="badge ${node.type}">${typeLabel}</span>
+            ${node.tier !== undefined ? `<span class="ml-2 text-xs text-slate-400">Tier ${node.tier}</span>` : ''}
+          </div>
+          <h2 class="text-xl font-bold text-white leading-tight">${node.name}</h2>
+          ${node.address ? `<div class="text-sm text-slate-400">📍 ${node.address}</div>` : ''}
+          ${node.phone ? `<div class="text-sm text-slate-400">📞 ${node.phone}</div>` : ''}
+          ${node.description ? `<div class="text-sm text-slate-300 leading-relaxed border-l-2 border-sky-500 pl-3">${node.description}</div>` : ''}
+          ${node.children && node.children.length > 0 ? `
+            <div class="space-y-2">
+              <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wide">Sub-locations (${node.children.length})</h3>
+              ${node.children.map(c => `<div class="text-sm bg-slate-700/30 rounded px-3 py-1.5 text-slate-300">• ${c.name}</div>`).join('')}
+            </div>
+          ` : ''}
+        </div>
+      `;
+      panel.classList.add('open');
+    }
+
+    function closeDetail() {
+      document.getElementById('detailPanel').classList.remove('open');
+    }
+
+    // ─── Stats ───────────────────────────────────────────────────────────
+    function buildStats() {
+      let nodeCount = 0;
+      function countNodes(node) {
+        nodeCount++;
+        if (node.children) node.children.forEach(countNodes);
+      }
+      countNodes(hierarchyData);
+
+      document.getElementById('statsBar').innerHTML = `
+        <span class="text-slate-400">${nodeCount} entities</span>
+        <span class="text-slate-600">|</span>
+        <span class="text-slate-400">Click + to expand</span>
+      `;
+    }
+
+    // ─── Init ────────────────────────────────────────────────────────────
+    document.body.addEventListener('click', (e) => {
+      const panel = document.getElementById('detailPanel');
+      if (!panel.contains(e.target) && panel.classList.contains('open')) closeDetail();
+    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDetail(); });
+
+    buildStats();
+    renderTree();
+  </script>
+</body>
+</html>
