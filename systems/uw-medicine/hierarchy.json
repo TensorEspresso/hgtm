@@ -4,21 +4,21 @@
   "extracted_at": "2026-06-26",
   "source": "Epic FHIR Brands Bundle + uwmedicine.org + CMS + Wikipedia validation",
   "summary": {
-    "total_entities": 8,
-    "total_relationships": 7,
+    "total_entities": 7,
+    "total_relationships": 6,
     "by_relationship_type": {
       "owns": 3,
       "manages": 1,
-      "partners_with": 3
+      "partners_with": 2
     },
     "by_confidence": {
-      "high": 6,
+      "high": 5,
       "medium": 1
     },
     "tiers": {
       "tier_0": 1,
       "tier_1": 4,
-      "tier_2": 3
+      "tier_2": 2
     },
     "note": "Tier 1: hospitals. Tier 2: specialty centers / air ambulance. Physician groups excluded."
   },
@@ -102,20 +102,7 @@
         "state": "WA",
         "zip": "98109"
       },
-      "note": "Independent nonprofit (founded 1975, never part of UW). Merged with SCCA in 2022; serves as UW Medicine's cancer program."
-    },
-    {
-      "id": "scca",
-      "name": "Seattle Cancer Care Alliance",
-      "type": "specialty_center",
-      "tier": 2,
-      "address": {
-        "street": "825 Eastlake Ave E",
-        "city": "Seattle",
-        "state": "WA",
-        "zip": "98109"
-      },
-      "note": "Joint venture: UW Medicine, Fred Hutchinson Cancer Center, Seattle Children's. NCI-designated cancer program."
+      "note": "Independent nonprofit (founded 1975, never part of UW). SCCA merged into the Center in April 2022; serves as UW Medicine's cancer program with separate governance."
     },
     {
       "id": "airlift-northwest",
@@ -195,19 +182,6 @@
       ],
       "verified_at": "2026-06-26",
       "note": "Independent nonprofit (founded 1975, never part of UW). Merged with SCCA in 2022; serves as UW Medicine's cancer program with separate governance."
-    },
-    {
-      "source": "uw-medicine-root",
-      "target": "scca",
-      "relationship_type": "partners_with",
-      "confidence": "high",
-      "sources": [
-        "uwmedicine.org",
-        "wikipedia",
-        "fredhutch.org"
-      ],
-      "verified_at": "2026-06-26",
-      "note": "Joint venture: shared ownership by UW Medicine, Fred Hutchinson Cancer Center, and Seattle Children's."
     },
     {
       "source": "uw-medicine-root",

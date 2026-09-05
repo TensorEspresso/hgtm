@@ -1,417 +1,483 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UW Medicine Hierarchy Explorer</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    :root { --card: #1e293b; --foreground: #e2e8f0; --accent: #38bdf8; --border: #334155; }
-    body { background: #0f172a; color: var(--foreground); font-family: system-ui, -apple-system, sans-serif; margin: 0; }
-    .detail-panel {
-      position: fixed; right: 0; top: 0; height: 100vh; width: 400px;
-      background: var(--card); border-left: 1px solid var(--border);
-      transform: translateX(100%); transition: transform 0.25s ease;
-      z-index: 50; overflow-y: auto;
-    }
-    .detail-panel.open { transform: translateX(0); }
-    .badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
-    .badge.health_system { background: #38bdf8; color: #0c4a6e; }
-    .badge.hospital { background: #4ade80; color: #052e16; }
-    .badge.specialty_center { background: #c084fc; color: #2e1065; }
-    .badge.air_ambulance { background: #fb923c; color: #431407; }
-    .badge.org { background: #60a5fa; color: #1e3a5f; }
-    .badge.clinic { background: #4ade80; color: #052e16; }
-    .badge.partner { background: #f87171; color: #450a0a; }
-    .badge.research { background: #facc15; color: #422006; }
-    .badge.education { background: #2dd4bf; color: #042f2e; }
-    .badge.transport { background: #fb923c; color: #431407; }
-    .node-rect { cursor: pointer; transition: filter 0.15s; }
-    .node-rect:hover { filter: brightness(1.3); }
-    .tier-0 { fill: #38bdf8; }
-    .tier-1 { fill: #4ade80; }
-    .tier-2 { fill: #c084fc; }
-    .tier-3 { fill: #60a5fa; }
-    .tier-4 { fill: #2dd4bf; }
-    .expand-btn { cursor: pointer; user-select: none; font-size: 14px; }
-    .expand-btn:hover { fill: #fff; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HS2 Hierarchy Explorer</title>
+<style>
+  :root{
+    --bg:#0d1117; --card:#161b22; --fg:#e6edf3; --muted:#8b949e; --border:#30363d; --accent:#38bdf8;
+    --owns:#39d353; --manages:#58a6ff; --partners:#f85149;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.45 system-ui,-apple-system,'Segoe UI',sans-serif;display:flex;flex-direction:column}
+
+  header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;padding:10px 20px;
+    background:rgba(13,17,23,.96);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:40;backdrop-filter:blur(6px)}
+  header h1{margin:0;font-size:15px}
+  .sub{font-size:12px;color:var(--muted);max-width:420px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  select,input[type=search]{background:var(--card);border:1px solid var(--border);color:var(--fg);border-radius:6px;padding:6px 10px;font-size:13px;outline:none}
+  select:focus,input:focus{border-color:var(--accent)}
+  #search{width:210px}
+  input[type=search]::-webkit-search-cancel-button{display:none}
+  .search-wrap{position:relative;display:flex;align-items:center}
+  .search-clear{position:absolute;right:8px;background:none;border:0;color:var(--muted);cursor:pointer;font-size:13px;padding:0 2px}
+  #matchInfo{font-size:12px;color:var(--muted);min-width:76px}
+  #matchInfo.hit{color:var(--accent)}
+  #matchInfo.miss{color:var(--partners)}
+  #stats{font-size:12px;color:var(--muted)}
+  .legend{display:flex;gap:14px;margin-left:auto;align-items:center;font-size:12px;color:var(--muted)}
+  .legend .item{display:flex;align-items:center;gap:6px}
+  .swatch{width:22px;height:0;border-top:2.5px solid}
+  .swatch.owns{border-color:var(--owns)}
+  .swatch.manages{border-color:var(--manages);border-top-style:dashed}
+  .swatch.partners_with{border-color:var(--partners);border-top-style:dotted}
+
+  #viewport{flex:1;position:relative;overflow:hidden}
+  #treeSvg{width:100%;height:100%;display:block;cursor:grab;touch-action:none}
+  #treeSvg.panning{cursor:grabbing}
+  .zoombar{position:absolute;right:16px;top:16px;display:flex;flex-direction:column;gap:6px;z-index:10}
+  .zoombar button{width:32px;height:32px;background:var(--card);border:1px solid var(--border);color:var(--fg);border-radius:6px;font-size:15px;cursor:pointer}
+  .zoombar button:hover{border-color:var(--accent)}
+  .node rect{transition:filter .12s}
+  .node:hover rect{filter:brightness(1.35)}
+  .edge-hit{cursor:pointer}
+  text{user-select:none}
+
+  #panel{position:fixed;top:0;right:0;height:100vh;width:400px;max-width:92vw;background:var(--card);
+    border-left:1px solid var(--border);transform:translateX(102%);transition:transform .22s ease;z-index:50;overflow-y:auto;padding:20px 22px}
+  #panel.open{transform:none}
+  #panel .close{position:absolute;top:10px;right:12px;background:none;border:0;color:var(--muted);font-size:18px;cursor:pointer}
+  #panel .close:hover{color:var(--fg)}
+  .badge{display:inline-block;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+  .badge.b-health_system{background:#38bdf8;color:#0c4a6e}
+  .badge.b-hospital{background:#4ade80;color:#052e16}
+  .badge.b-specialty_center{background:#c084fc;color:#2e1065}
+  .badge.b-clinic{background:#86efac;color:#052e16}
+  .badge.b-air_ambulance{background:#fb923c;color:#431407}
+  .badge.b-physician_group{background:#60a5fa;color:#1e3a5f}
+  .badge.b-clinic_network{background:#60a5fa;color:#1e3a5f}
+  .badge.b-program{background:#2dd4bf;color:#042f2e}
+  .badge.b-brand{background:#8b949e;color:#1f2328}
+  .badge.b-other{background:#30363d;color:var(--fg)}
+  h2.title{margin:10px 0 4px;font-size:20px;line-height:1.25}
+  .meta{font-size:12px;color:var(--muted);margin:2px 0}
+  .note{font-size:13px;color:#c9d1d9;background:rgba(56,139,248,.08);border-left:2px solid var(--accent);padding:8px 12px;border-radius:0 6px 6px 0;margin:12px 0}
+  section h3{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:18px 0 8px}
+  .rel{border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:10px;background:rgba(255,255,255,.02)}
+  .rel .top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .chip{padding:1px 8px;border-radius:999px;font-size:10.5px;font-weight:700}
+  .chip.owns{background:rgba(57,211,83,.15);color:var(--owns)}
+  .chip.manages{background:rgba(88,166,255,.15);color:var(--manages)}
+  .chip.partners_with{background:rgba(248,81,73,.15);color:var(--partners)}
+  .conf{font-size:10.5px;font-weight:700;padding:1px 8px;border-radius:999px}
+  .conf.high{background:rgba(57,211,83,.15);color:var(--owns)}
+  .conf.medium{background:rgba(210,153,34,.15);color:#d29922}
+  .conf.low{background:rgba(240,136,62,.15);color:#f0883e}
+  .conf.inferred{background:rgba(139,153,158,.15);color:var(--muted)}
+  .rel .other{font-size:13.5px;font-weight:600}
+  .rel .other a{color:var(--fg);text-decoration:none;cursor:pointer;border-bottom:1px dotted var(--muted)}
+  .srcs{margin-top:6px;display:flex;flex-wrap:wrap;gap:5px}
+  .src{font-size:10.5px;font-family:ui-monospace,Menlo,monospace;background:var(--bg);border:1px solid var(--border);padding:1px 7px;border-radius:5px;color:var(--muted)}
+  .vline{font-size:11px;color:var(--muted);margin-top:5px}
+  .rnote{font-size:12px;color:#c9d1d9;margin-top:6px;font-style:italic}
+  .kv{display:grid;grid-template-columns:110px 1fr;gap:3px 10px;font-size:12.5px;margin-top:8px}
+  .kv .k{color:var(--muted)}
+  .kv .v{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;word-break:break-all}
+  .addr{font-size:13px;color:#c9d1d9;margin:3px 0}
+  .addr .lbl{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+  .empty{color:var(--muted);font-size:13px;font-style:italic}
+</style>
 </head>
-<body class="min-h-screen">
-
-  <!-- Header -->
-  <header class="fixed top-0 left-0 right-0 z-40 px-6 py-3 border-b border-slate-700 bg-slate-900/95 backdrop-blur">
-    <div class="max-w-7xl mx-auto flex items-center justify-between">
-      <div>
-        <h1 class="text-xl font-bold text-white">UW Medicine Hierarchy</h1>
-        <p class="text-sm text-slate-400">Academic Health System · WWAMI Region</p>
-      </div>
-      <div id="statsBar" class="flex items-center gap-4 text-xs text-slate-300"></div>
-    </div>
-  </header>
-
-  <!-- Detail Panel -->
-  <div class="detail-panel" id="detailPanel">
-    <button onclick="closeDetail()" class="sticky top-0 right-0 p-3 text-slate-400 hover:text-white text-xl">✕</button>
-    <div id="detailContent" class="p-6 pt-2"></div>
+<body>
+<header>
+  <div style="min-width:0">
+    <h1 id="sysTitle">HS2 Hierarchy Explorer</h1>
+    <div class="sub" id="sysSub">loading…</div>
   </div>
-
-  <!-- Main Content -->
-  <div class="pt-24 pb-8 px-6 overflow-auto min-h-screen">
-    <div class="max-w-7xl mx-auto">
-      <svg id="treeSvg" class="w-full"></svg>
-    </div>
+  <select id="sysSelect" title="Health system"></select>
+  <div class="search-wrap">
+    <input id="search" type="search" placeholder="Search entities…" autocomplete="off">
+    <button class="search-clear" id="searchClear" title="Clear search" style="display:none">✕</button>
   </div>
+  <span id="matchInfo"></span>
+  <div id="stats"></div>
+  <div class="legend" id="legend"></div>
+</header>
 
-  <script>
-    // ─── Data ────────────────────────────────────────────────────────────
-    const hierarchyData = {
-      name: 'UW Medicine', type: 'health_system', tier: 0,
-      address: '1959 NE Pacific St, Seattle, WA 98195',
-      description: 'Integrated clinical, research, and learning health system. CEO: Tim Dellit. Executive VP Medical Affairs & Dean of the School of Medicine.',
-      children: [
-        {
-          name: 'Hospitals & Clinics', type: 'org', tier: 1,
-          description: 'Led by Brad Simmons, President - Hospitals and Clinics and Senior Vice President for Medical Affairs.',
-          children: [
-            { name: 'Harborview Medical Center', type: 'hospital', tier: 2, address: '325 9th Ave, Seattle, WA 98104', phone: '(206) 744-9535', description: 'Level I trauma center. Renowned for emergency care and elective surgery. Owned by King County, operated by UW Medicine.' },
-            { name: 'UW Medical Center – Montlake', type: 'hospital', tier: 2, address: '1959 NE Pacific St, Seattle, WA 98195', phone: '(206) 598-3300', description: '910 beds (Montlake + Northwest combined), 8,981 employees. Home to the Health Sciences Center, UW School of Medicine, UW School of Dentistry, and a 20-bed Fred Hutch inpatient facility on campus.' },
-            { name: 'UW Medical Center – Northwest', type: 'hospital', tier: 2, address: '1550 North 115th Street, Seattle, WA 98133', phone: '(206) 364-0500', description: '44-acre campus in North Seattle. Includes Frank Chopp Center for Behavioral Health, Northwest Outpatient Medical Center, and Specialty Care Meridian Pavilion.' },
-            { name: 'Valley Medical Center', type: 'hospital', tier: 2, address: '14410 SE Petrovitsky Rd, Renton, WA 98059', phone: '(425) 272-1400', description: 'Serves the South Sound region with comprehensive medical and surgical services. Owned by Public Hospital District No. 1. Strategic alliance ending Dec 31, 2026.' }
-          ]
-        },
-        {
-          name: 'UW Physicians', type: 'org', tier: 1,
-          address: '1959 NE Pacific St Fl 2, Seattle, WA 98195', phone: '(206) 543-6420',
-          description: 'Physician practice group. President: T.H. Dellit (also CEO of UW Medicine). NPI: 1407291446 / 1811332539.'
-        },
-        {
-          name: 'UW Neighborhood Clinics', type: 'org', tier: 1,
-          description: 'Network of community-based primary and urgent care clinics. See more than 1.3 million patients each year.',
-          children: [
-            { name: 'Ballard', type: 'clinic', tier: 2, address: '1455 NW Leary Way Ste 250, Seattle, WA 98107', phone: '(206) 789-7777', description: 'Primary care and urgent care. Open Monday to Saturday.' },
-            { name: 'Northgate', type: 'clinic', tier: 2, address: '314 NE Thornton Place, Seattle, WA 98125', phone: '(206) 528-8000', description: 'Along I-5 near Northgate Transit Center. Primary care six days a week, urgent care seven days.' },
-            { name: 'Ravenna', type: 'clinic', tier: 2, address: '4915 25th Ave NE #300, Seattle, WA 98105', phone: '(206) 525-7777', description: 'Just north of University Village.' },
-            { name: 'Factoria', type: 'clinic', tier: 2, address: '13231 SE 36th St #110, Bellevue, WA 98006', phone: '(206) 957-9000', description: 'Primary care in Bellevue/Factoria area.' },
-            { name: 'Belltown', type: 'clinic', tier: 2, address: 'Seattle, WA', phone: '(206) 443-0400', description: 'Pediatric and primary care in Belltown district.' },
-            { name: 'Federal Way', type: 'clinic', tier: 2, address: 'Federal Way, WA', phone: '(253) 520-1799', description: 'Primary care in Federal Way.' },
-            { name: 'Fremont', type: 'clinic', tier: 2, address: 'Seattle, WA', phone: '(206) 545-9300', description: 'Primary care in Fremont.' },
-            { name: 'Issaquah', type: 'clinic', tier: 2, address: 'Issaquah, WA', phone: '(425) 391-3900', description: 'Primary care in Issaquah.' },
-            { name: 'Kent–Des Moines', type: 'clinic', tier: 2, address: 'Kent / Des Moines, WA', phone: '(206) 870-8880', description: 'Primary care in Kent/Des Moines.' },
-            { name: 'Olympia', type: 'clinic', tier: 2, address: 'Olympia, WA', phone: '(360) 507-9100', description: 'Primary care in Olympia.' },
-            { name: 'Lake Forest Park', type: 'clinic', tier: 2, address: 'Lake Forest Park, WA', phone: '(206) 668-8272', description: 'Primary care in Lake Forest Park.' },
-            { name: 'Shoreline', type: 'clinic', tier: 2, address: 'Shoreline, WA', phone: '(206) 542-5656', description: 'Primary care in Shoreline.' },
-            { name: 'Woodinville', type: 'clinic', tier: 2, address: 'Woodinville, WA', phone: '(425) 485-4100', description: 'Primary care in Woodinville.' }
-          ]
-        },
-        {
-          name: 'School of Medicine', type: 'education', tier: 1,
-          address: '1959 NE Pacific St, Seattle, WA 98195',
-          description: 'Founded 1946. Dean: Tim Dellit. 1,800 faculty, 957 students. WWAMI program spans WA, WY, AK, MT, ID.',
-          children: [
-            {
-              name: 'WWAMI Program', type: 'education', tier: 2,
-              address: 'Multi-state',
-              description: 'Washington, Wyoming, Alaska, Montana, Idaho — six campuses across five states.',
-              children: [
-                { name: 'Seattle Campus', type: 'education', tier: 3, address: 'Seattle, WA', description: 'UW partner. Class size: 100.' },
-                { name: 'Spokane Campus', type: 'education', tier: 3, address: 'Spokane, WA', description: 'Gonzaga University partner. Class size: 60.' },
-                { name: 'Laramie Campus', type: 'education', tier: 3, address: 'Laramie, WY', description: 'University of Wyoming partner. Class size: 20.' },
-                { name: 'Anchorage Campus', type: 'education', tier: 3, address: 'Anchorage, AK', description: 'University of Alaska Anchorage partner. Class size: 30.' },
-                { name: 'Bozeman Campus', type: 'education', tier: 3, address: 'Bozeman, MT', description: 'Montana State University partner. Class size: 30.' },
-                { name: 'Moscow Campus', type: 'education', tier: 3, address: 'Moscow, ID', description: 'University of Idaho partner. Class size: 40.' }
-              ]
-            }
-          ]
-        },
-        {
-          name: 'Partnerships & Affiliations', type: 'org', tier: 1,
-          description: 'Shared ownership and governance with external organizations.',
-          children: [
-            { name: 'Fred Hutchinson Cancer Center', type: 'partner', tier: 2, address: '1100 Fairview Avenue N, Seattle, WA 98109', description: 'Independent, nonprofit cancer center (founded 1975). Merged with SCCA in 2022. NCI-designated. Serves as UW Medicine\'s cancer program.', children: [
-              { name: 'Seattle Cancer Care Alliance (SCCA)', type: 'partner', tier: 3, address: '850 Fairview Ave N, Seattle, WA 98109', description: 'Former joint venture of UW Medicine, Fred Hutch, and Seattle Children\'s. Merged into Fred Hutchinson Cancer Center in 2022.' }
-            ]},
-            { name: 'Children\'s University Medical Group (CUMG)', type: 'partner', tier: 2, address: 'Seattle, WA', description: 'Not-for-profit physician group supporting Seattle Children\'s Hospital and UW School of Medicine in pediatric care, charitable, educational, and scientific missions.' }
-          ]
-        },
-        {
-          name: 'Airlift Northwest', type: 'transport', tier: 1,
-          address: '6505 Perimeter Road South, Suite 200, Seattle, WA 98108', phone: '(206) 521-1599',
-          description: 'Air medical transport for Washington, Alaska, Montana, Idaho, and Oregon. Founded 1982. Flies 4,500+ patients annually. Aviation services operated by Air Methods since 2015.'
-        }
-      ]
-    };
+<div id="viewport">
+  <svg id="treeSvg"></svg>
+  <div class="zoombar">
+    <button id="zoomIn" title="Zoom in">＋</button>
+    <button id="zoomOut" title="Zoom out">−</button>
+    <button id="zoomFit" title="Fit to view">⌂</button>
+  </div>
+</div>
 
-    // ─── State ───────────────────────────────────────────────────────────
-    const expanded = new Set(); // node paths that are expanded
-    const nodeWidth = 200;
-    const nodeHeight = 56;
-    const hGap = 40; // horizontal gap between siblings
-    const vGap = 80; // vertical gap between levels
+<div id="panel">
+  <button class="close" id="panelClose" title="Close">✕</button>
+  <div id="panelBody"></div>
+</div>
 
-    // ─── Layout ──────────────────────────────────────────────────────────
-    // Calculate the number of visible leaf slots a subtree occupies
-    function getLeafCount(node, path) {
-      const nodePath = path + '/' + node.name;
-      if (node.children && node.children.length > 0 && expanded.has(nodePath)) {
-        return node.children.reduce((sum, child) => sum + getLeafCount(child, nodePath), 0);
-      }
-      return 1;
-    }
+<script>
+'use strict';
+// ─── Constants ────────────────────────────────────────────────
+const NS = 'http://www.w3.org/2000/svg';
+const NW = 190, NH = 54, HGAP = 38, VGAP = 76;
+const EDGE = {
+  owns:          { raw: '#39d353', dash: null,  label: 'owns' },
+  manages:       { raw: '#58a6ff', dash: '7 4', label: 'manages' },
+  partners_with: { raw: '#f85149', dash: '2 5', label: 'partners_with' },
+};
+const TIER_FILL   = ['#1c2541', '#1a2332', '#1c3a5e', '#1a4a5e'];
+const TIER_STROKE = ['#38bdf8', '#4ade80', '#c084fc', '#2dd4bf'];
+const TYPE_LABEL = {
+  health_system: 'Health System', hospital: 'Hospital', specialty_center: 'Specialty Center',
+  clinic: 'Clinic', air_ambulance: 'Air Ambulance', physician_group: 'Physician Group',
+  clinic_network: 'Clinic Network', program: 'Program', brand: 'Brand',
+};
 
-    function layout(node, x, y, path) {
-      const nodePath = path + '/' + node.name;
-      node._x = x;
-      node._y = y;
-      node._path = nodePath;
+// ─── State ────────────────────────────────────────────────────
+let data = null, ent = {}, children = {}, relMap = {};
+let expanded = new Set(), matches = new Set(), query = '';
+let vb = null, world = null, parentOf = {};
 
-      if (node.children && node.children.length > 0 && expanded.has(nodePath)) {
-        // Total width occupied by this subtree's visible leaves
-        const totalLeaves = node.children.reduce((sum, child) => sum + getLeafCount(child, nodePath), 0);
-        const totalWidth = totalLeaves * (nodeWidth + hGap) - hGap;
-        let childX = x + nodeWidth/2 - totalWidth/2;
+const svg = document.getElementById('treeSvg');
+const panel = document.getElementById('panel');
+const panelBody = document.getElementById('panelBody');
 
-        node.children.forEach(child => {
-          layout(child, childX, y + nodeHeight + vGap, nodePath);
-          const childLeaves = getLeafCount(child, nodePath);
-          childX += childLeaves * (nodeWidth + hGap);
-        });
-      }
-    }
+// ─── Load ─────────────────────────────────────────────────────
+async function loadSystem(id) {
+  const res = await fetch('/api/hierarchy?system=' + encodeURIComponent(id));
+  if (!res.ok) throw new Error('Failed to load ' + id + ': HTTP ' + res.status);
+  data = await res.json();
 
-    // ─── Rendering ───────────────────────────────────────────────────────
-    function renderTree() {
-      const svg = document.getElementById('treeSvg');
-      svg.innerHTML = '';
+  ent = {}; data.entities.forEach(e => ent[e.id] = e);
+  children = {}; relMap = {}; parentOf = {};
+  data.relationships.forEach(r => {
+    (children[r.source] = children[r.source] || []).push(r.target);
+    relMap[r.source + '->' + r.target] = r;
+    parentOf[r.target] = r.source;
+  });
+  expanded = new Set(Object.keys(children)); // default: fully expanded
+  matches = new Set(); query = '';
+  document.getElementById('search').value = '';
+  document.getElementById('searchClear').style.display = 'none';
+  const mi = document.getElementById('matchInfo'); mi.textContent = ''; mi.className = '';
 
-      // Compute layout
-      layout(hierarchyData, 0, 0, '');
+  document.getElementById('sysTitle').textContent = data.health_system || id;
+  document.title = (data.health_system || id) + ' — HS2 Explorer';
+  document.getElementById('sysSub').textContent =
+    'extracted ' + (data.extracted_at || '—') + (data.source ? ' · ' + data.source : '');
 
-      // Compute bounds of visible nodes
-      let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-      function updateBounds(node) {
-        const nx = node._x - nodeWidth/2, ny = node._y - nodeHeight/2;
-        const nw = node._x + nodeWidth/2, nh = node._y + nodeHeight/2;
-        if (nx < minX) minX = nx;
-        if (nw > maxX) maxX = nw;
-        if (ny < minY) minY = ny;
-        if (nh > maxY) maxY = nh;
-        if (node.children && node.children.length > 0) {
-          const nodePath = node._path;
-          if (expanded.has(nodePath)) {
-            node.children.forEach(updateBounds);
-          }
-        }
-      }
-      updateBounds(hierarchyData);
+  updateStats();
+  render();
+  fit();
+}
 
-      const padding = 60;
-      const width = (maxX - minX) + padding * 2;
-      const height = (maxY - minY) + padding * 2;
-      const offsetX = -minX + padding;
-      const offsetY = -minY + padding;
+// ─── Stats + legend (dynamic counts from data) ────────────────
+function updateStats() {
+  document.getElementById('stats').textContent =
+    data.entities.length + ' entities · ' + data.relationships.length + ' relationships';
+  const counts = { owns: 0, manages: 0, partners_with: 0 };
+  data.relationships.forEach(r => { if (counts[r.relationship_type] !== undefined) counts[r.relationship_type]++; });
+  document.getElementById('legend').innerHTML = Object.entries(EDGE)
+    .map(([k, v]) => '<span class="item"><span class="swatch ' + k + '"></span>' + v.label + ' (' + counts[k] + ')</span>')
+    .join('');
+}
 
-      svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
-      svg.setAttribute('width', width);
-      svg.setAttribute('height', height);
+// ─── Layout ───────────────────────────────────────────────────
+function leafCount(id) {
+  const kids = children[id];
+  if (kids && kids.length && expanded.has(id)) return kids.reduce((s, c) => s + leafCount(c), 0);
+  return 1;
+}
+function layoutNode(id, x, y) {
+  const n = { id, x, y };
+  const kids = children[id];
+  if (kids && kids.length && expanded.has(id)) {
+    const total = kids.reduce((s, c) => s + leafCount(c), 0);
+    const w = total * (NW + HGAP) - HGAP;
+    let cx = x + NW / 2 - w / 2;
+    n.kids = kids.map(c => { const k = layoutNode(c, cx, y + NH + VGAP); cx += leafCount(c) * (NW + HGAP); return k; });
+  }
+  return n;
+}
+function collect(n, out) { out.nodes.push(n); (n.kids || []).forEach(k => collect(k, out)); }
 
-      // Render links first (behind)
-      const linksG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-      function renderLinks(node) {
-        if (node.children && node.children.length > 0) {
-          const nodePath = node._path;
-          if (expanded.has(nodePath)) {
-            node.children.forEach(child => {
-              const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-              const x1 = node._x + offsetX, y1 = node._y + nodeHeight/2 + offsetY;
-              const x2 = child._x + offsetX, y2 = child._y - nodeHeight/2 + offsetY;
-              const midY = (y1 + y2) / 2;
-              path.setAttribute('d', `M ${x1} ${y1} C ${x1} ${midY}, ${x2} ${midY}, ${x2} ${y2}`);
-              path.setAttribute('stroke', '#475569');
-              path.setAttribute('stroke-width', '2');
-              path.setAttribute('fill', 'none');
-              path.setAttribute('opacity', '0.5');
-              linksG.appendChild(path);
-              renderLinks(child);
-            });
-          }
-        }
-      }
-      renderLinks(hierarchyData);
-      svg.appendChild(linksG);
+// ─── Render ───────────────────────────────────────────────────
+function render() {
+  const root = data.entities.find(e => e.tier === 0);
+  if (!root) return;
+  const out = { nodes: [] };
+  collect(layoutNode(root.id, 0, 0), out);
 
-      // Render nodes
-      const nodesG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-      function renderNode(node) {
-        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-        g.style.cursor = 'pointer';
+  let minX = 1e9, maxX = -1e9, minY = 1e9, maxY = -1e9;
+  out.nodes.forEach(n => {
+    minX = Math.min(minX, n.x - NW / 2); maxX = Math.max(maxX, n.x + NW / 2);
+    minY = Math.min(minY, n.y - NH / 2); maxY = Math.max(maxY, n.y + NH / 2 + 24);
+  });
+  const pad = 48;
+  world = { x: minX - pad, y: minY - pad, w: (maxX - minX) + pad * 2, h: (maxY - minY) + pad * 2 };
+  if (!vb) vb = { ...world };
+  applyVB();
+  svg.innerHTML = '';
 
-        const hasChildren = node.children && node.children.length > 0;
-        const isExpanded = hasChildren && expanded.has(node._path);
-
-        // Node rect
-        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        rect.setAttribute('x', node._x - nodeWidth/2 + offsetX);
-        rect.setAttribute('y', node._y - nodeHeight/2 + offsetY);
-        rect.setAttribute('width', nodeWidth);
-        rect.setAttribute('height', nodeHeight);
-        rect.setAttribute('rx', 8);
-        rect.setAttribute('class', `node-rect tier-${node.tier || 0}`);
-        rect.setAttribute('stroke', '#475569');
-        rect.setAttribute('stroke-width', '1');
-
-        // Name text
-        const name = node.name.length > 26 ? node.name.slice(0, 24) + '…' : node.name;
-        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        text.setAttribute('x', node._x + offsetX);
-        text.setAttribute('y', node._y - 8 + offsetY);
-        text.setAttribute('text-anchor', 'middle');
-        text.setAttribute('fill', '#fff');
-        text.setAttribute('font-size', '12');
-        text.setAttribute('font-weight', '600');
-        text.textContent = name;
-
-        // Type subtext
-        const sub = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        sub.setAttribute('x', node._x + offsetX);
-        sub.setAttribute('y', node._y + 10 + offsetY);
-        sub.setAttribute('text-anchor', 'middle');
-        sub.setAttribute('fill', '#94a3b8');
-        sub.setAttribute('font-size', '10');
-        sub.textContent = (node.type || '').replace(/_/g, ' ');
-
-        g.appendChild(rect);
-        g.appendChild(text);
-        g.appendChild(sub);
-
-        // Expand/collapse button
-        if (hasChildren) {
-          const btn = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-          btn.setAttribute('class', 'expand-btn');
-
-          const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-          circle.setAttribute('cx', node._x + offsetX);
-          circle.setAttribute('cy', node._y + nodeHeight/2 + 12 + offsetY);
-          circle.setAttribute('r', 10);
-          circle.setAttribute('fill', '#334155');
-          circle.setAttribute('stroke', '#475569');
-          circle.setAttribute('stroke-width', '1');
-
-          const btnText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-          btnText.setAttribute('x', node._x + offsetX);
-          btnText.setAttribute('y', node._y + nodeHeight/2 + 16 + offsetY);
-          btnText.setAttribute('text-anchor', 'middle');
-          btnText.setAttribute('fill', '#fff');
-          btnText.setAttribute('font-size', '11');
-          btnText.setAttribute('font-weight', '700');
-          btnText.textContent = isExpanded ? '−' : '+';
-
-          btn.appendChild(circle);
-          btn.appendChild(btnText);
-
-          btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            toggleNode(node._path);
-          });
-          g.appendChild(btn);
-        }
-
-        // Click handler for detail
-        g.addEventListener('click', (e) => {
-          if (e.target === rect || e.target === text || e.target === sub) {
-            e.stopPropagation();
-            showDetail(node);
-          }
-        });
-
-        g.addEventListener('mouseenter', () => { g.style.transform = 'translateY(-2px)'; });
-        g.addEventListener('mouseleave', () => { g.style.transform = ''; });
-
-        nodesG.appendChild(g);
-
-        // Recurse into children if expanded
-        if (hasChildren && isExpanded) {
-          node.children.forEach(child => {
-            nodesG.appendChild(renderNode(child));
-          });
-        }
-        return g;
-      }
-
-      nodesG.appendChild(renderNode(hierarchyData));
-      svg.appendChild(nodesG);
-    }
-
-    // ─── Interaction ─────────────────────────────────────────────────────
-    function toggleNode(path) {
-      if (expanded.has(path)) {
-        expanded.delete(path);
-      } else {
-        expanded.add(path);
-      }
-      renderTree();
-    }
-
-    function showDetail(node) {
-      const panel = document.getElementById('detailPanel');
-      const content = document.getElementById('detailContent');
-
-      const typeLabel = {
-        health_system: 'Health System', hospital: 'Hospital', org: 'Organization',
-        clinic: 'Clinic', partner: 'Partner', research: 'Research',
-        education: 'Education', transport: 'Transport'
-      }[node.type] || node.type;
-
-      content.innerHTML = `
-        <div class="space-y-5">
-          <div>
-            <span class="badge ${node.type}">${typeLabel}</span>
-            ${node.tier !== undefined ? `<span class="ml-2 text-xs text-slate-400">Tier ${node.tier}</span>` : ''}
-          </div>
-          <h2 class="text-xl font-bold text-white leading-tight">${node.name}</h2>
-          ${node.address ? `<div class="text-sm text-slate-400">📍 ${node.address}</div>` : ''}
-          ${node.phone ? `<div class="text-sm text-slate-400">📞 ${node.phone}</div>` : ''}
-          ${node.description ? `<div class="text-sm text-slate-300 leading-relaxed border-l-2 border-sky-500 pl-3">${node.description}</div>` : ''}
-          ${node.children && node.children.length > 0 ? `
-            <div class="space-y-2">
-              <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wide">Sub-locations (${node.children.length})</h3>
-              ${node.children.map(c => `<div class="text-sm bg-slate-700/30 rounded px-3 py-1.5 text-slate-300">• ${c.name}</div>`).join('')}
-            </div>
-          ` : ''}
-        </div>
-      `;
-      panel.classList.add('open');
-    }
-
-    function closeDetail() {
-      document.getElementById('detailPanel').classList.remove('open');
-    }
-
-    // ─── Stats ───────────────────────────────────────────────────────────
-    function buildStats() {
-      let nodeCount = 0;
-      function countNodes(node) {
-        nodeCount++;
-        if (node.children) node.children.forEach(countNodes);
-      }
-      countNodes(hierarchyData);
-
-      document.getElementById('statsBar').innerHTML = `
-        <span class="text-slate-400">${nodeCount} entities</span>
-        <span class="text-slate-600">|</span>
-        <span class="text-slate-400">Click + to expand</span>
-      `;
-    }
-
-    // ─── Init ────────────────────────────────────────────────────────────
-    document.body.addEventListener('click', (e) => {
-      const panel = document.getElementById('detailPanel');
-      if (!panel.contains(e.target) && panel.classList.contains('open')) closeDetail();
+  // Edges (drawn first, behind nodes)
+  const gE = document.createElementNS(NS, 'g');
+  out.nodes.forEach(n => {
+    (n.kids || []).forEach(k => {
+      const r = relMap[n.id + '->' + k.id];
+      if (!r) return;
+      const x1 = n.x, y1 = n.y + NH / 2, x2 = k.x, y2 = k.y - NH / 2, my = (y1 + y2) / 2;
+      const d = 'M ' + x1 + ' ' + y1 + ' C ' + x1 + ' ' + my + ', ' + x2 + ' ' + my + ', ' + x2 + ' ' + y2;
+      const spec = EDGE[r.relationship_type] || { raw: '#8b949e', dash: null };
+      const p = document.createElementNS(NS, 'path');
+      p.setAttribute('d', d); p.setAttribute('fill', 'none');
+      p.setAttribute('stroke', spec.raw); p.setAttribute('stroke-width', '2');
+      if (spec.dash) p.setAttribute('stroke-dasharray', spec.dash);
+      p.setAttribute('opacity', '.75'); p.setAttribute('pointer-events', 'none');
+      gE.appendChild(p);
+      const hit = document.createElementNS(NS, 'path');
+      hit.setAttribute('d', d); hit.setAttribute('fill', 'none');
+      hit.setAttribute('stroke', 'transparent'); hit.setAttribute('stroke-width', '14');
+      hit.setAttribute('pointer-events', 'stroke'); hit.setAttribute('class', 'edge-hit');
+      const tip = document.createElementNS(NS, 'title');
+      tip.textContent = r.relationship_type + ' (' + r.confidence + ') — ' + ent[r.source].name + ' → ' + ent[r.target].name;
+      hit.appendChild(tip);
+      hit.addEventListener('click', ev => { ev.stopPropagation(); showRel(r); });
+      hit.addEventListener('mousedown', ev => ev.stopPropagation());
+      gE.appendChild(hit);
     });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDetail(); });
+  });
+  svg.appendChild(gE);
 
-    buildStats();
-    renderTree();
-  </script>
+  const gN = document.createElementNS(NS, 'g');
+  out.nodes.forEach(n => gN.appendChild(renderNode(n)));
+  svg.appendChild(gN);
+}
+
+function renderNode(n) {
+  const e = ent[n.id];
+  const tier = Math.min(e.tier ?? 0, 3);
+  const isMatch = matches.has(n.id);
+  const g = document.createElementNS(NS, 'g');
+  g.setAttribute('class', 'node'); g.style.cursor = 'pointer';
+
+  const rect = document.createElementNS(NS, 'rect');
+  rect.setAttribute('x', n.x - NW / 2); rect.setAttribute('y', n.y - NH / 2);
+  rect.setAttribute('width', NW); rect.setAttribute('height', NH);
+  rect.setAttribute('rx', 8);
+  rect.setAttribute('fill', TIER_FILL[tier]);
+  rect.setAttribute('stroke', isMatch ? '#38bdf8' : TIER_STROKE[tier]);
+  rect.setAttribute('stroke-width', isMatch ? 3 : 1.5);
+
+  const name = e.name.length > 26 ? e.name.slice(0, 25) + '…' : e.name;
+  const t = document.createElementNS(NS, 'text');
+  t.setAttribute('x', n.x); t.setAttribute('y', n.y - 6);
+  t.setAttribute('text-anchor', 'middle'); t.setAttribute('fill', '#fff');
+  t.setAttribute('font-size', '12.5'); t.setAttribute('font-weight', '600');
+  t.textContent = name;
+
+  const sub = document.createElementNS(NS, 'text');
+  sub.setAttribute('x', n.x); sub.setAttribute('y', n.y + 12);
+  sub.setAttribute('text-anchor', 'middle'); sub.setAttribute('fill', '#8b949e');
+  sub.setAttribute('font-size', '10');
+  sub.textContent = (TYPE_LABEL[e.type] || e.type) + ' · tier ' + e.tier;
+
+  g.appendChild(rect); g.appendChild(t); g.appendChild(sub);
+
+  const kids = children[n.id];
+  if (kids && kids.length) {
+    const open = expanded.has(n.id);
+    const c = document.createElementNS(NS, 'circle');
+    c.setAttribute('cx', n.x); c.setAttribute('cy', n.y + NH / 2 + 13);
+    c.setAttribute('r', 9); c.setAttribute('fill', '#21262d'); c.setAttribute('stroke', '#30363d');
+    const bt = document.createElementNS(NS, 'text');
+    bt.setAttribute('x', n.x); bt.setAttribute('y', n.y + NH / 2 + 17);
+    bt.setAttribute('text-anchor', 'middle'); bt.setAttribute('fill', '#fff');
+    bt.setAttribute('font-size', '11'); bt.setAttribute('font-weight', '700');
+    bt.textContent = open ? '−' : '+';
+    g.appendChild(c); g.appendChild(bt);
+    const hit = document.createElementNS(NS, 'circle');
+    hit.setAttribute('cx', n.x); hit.setAttribute('cy', n.y + NH / 2 + 13);
+    hit.setAttribute('r', 13); hit.setAttribute('fill', 'transparent');
+    hit.addEventListener('click', ev => { ev.stopPropagation(); toggleNode(n.id); });
+    hit.addEventListener('mousedown', ev => ev.stopPropagation());
+    g.appendChild(hit);
+  }
+
+  g.addEventListener('click', ev => { ev.stopPropagation(); showEnt(n.id); });
+  g.addEventListener('mousedown', ev => ev.stopPropagation());
+  return g;
+}
+
+function toggleNode(id) {
+  if (expanded.has(id)) expanded.delete(id); else expanded.add(id);
+  render();
+}
+
+// ─── ViewBox: zoom / pan / fit ────────────────────────────────
+function applyVB() { if (vb) svg.setAttribute('viewBox', vb.x + ' ' + vb.y + ' ' + vb.w + ' ' + vb.h); }
+function fit() { if (world) { vb = { ...world }; applyVB(); } }
+function zoomBy(f, cx, cy) {
+  if (!vb) return;
+  vb = { x: cx - (cx - vb.x) * f, y: cy - (cy - vb.y) * f, w: vb.w * f, h: vb.h * f };
+  applyVB();
+}
+document.getElementById('zoomIn').onclick = () => zoomBy(0.8, vb ? vb.x + vb.w / 2 : 0, vb ? vb.y + vb.h / 2 : 0);
+document.getElementById('zoomOut').onclick = () => zoomBy(1.25, vb ? vb.x + vb.w / 2 : 0, vb ? vb.y + vb.h / 2 : 0);
+document.getElementById('zoomFit').onclick = fit;
+
+svg.addEventListener('wheel', e => {
+  e.preventDefault();
+  const m = svg.getScreenCTM();
+  if (!m) return;
+  const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+  const p = pt.matrixTransform(m.inverse());
+  zoomBy(e.deltaY > 0 ? 1.12 : 1 / 1.12, p.x, p.y);
+}, { passive: false });
+
+let pan = null;
+svg.addEventListener('mousedown', e => {
+  const m = svg.getScreenCTM();
+  if (!m) return;
+  pan = { sx: e.clientX, sy: e.clientY, vx: vb.x, vy: vb.y, k: m.a, moved: false };
+  svg.classList.add('panning');
+});
+window.addEventListener('mousemove', e => {
+  if (!pan) return;
+  if (Math.abs(e.clientX - pan.sx) + Math.abs(e.clientY - pan.sy) > 3) pan.moved = true;
+  vb.x = pan.vx - (e.clientX - pan.sx) / pan.k;
+  vb.y = pan.vy - (e.clientY - pan.sy) / pan.k;
+  applyVB();
+});
+window.addEventListener('mouseup', e => {
+  if (pan && !pan.moved && e.target === svg) closePanel();
+  pan = null;
+  svg.classList.remove('panning');
+});
+
+// ─── Search ───────────────────────────────────────────────────
+const searchEl = document.getElementById('search');
+const matchInfo = document.getElementById('matchInfo');
+const searchClear = document.getElementById('searchClear');
+searchEl.addEventListener('input', () => {
+  query = searchEl.value.trim().toLowerCase();
+  searchClear.style.display = query ? '' : 'none';
+  if (!query) {
+    matches = new Set(); matchInfo.textContent = ''; matchInfo.className = '';
+    render(); return;
+  }
+  matches = new Set(data.entities.filter(e => e.name.toLowerCase().includes(query)).map(e => e.id));
+  matches.forEach(id => {           // auto-expand ancestors of matches
+    let p = parentOf[id];
+    while (p) { expanded.add(p); p = parentOf[p]; }
+  });
+  render();
+  if (matches.size) {
+    matchInfo.textContent = matches.size + ' match' + (matches.size > 1 ? 'es' : '');
+    matchInfo.className = 'hit';
+    fit();
+  } else {
+    matchInfo.textContent = 'no matches';
+    matchInfo.className = 'miss';
+  }
+});
+searchClear.onclick = () => { searchEl.value = ''; searchEl.dispatchEvent(new Event('input')); searchEl.focus(); };
+
+// ─── Detail panel ─────────────────────────────────────────────
+function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+function fmtAddr(a) {
+  if (!a) return '';
+  return [a.street, a.city, [a.state, a.zip].filter(Boolean).join(' ')].filter(Boolean).join(', ');
+}
+function typeBadge(t) { return '<span class="badge b-' + t + '">' + esc(TYPE_LABEL[t] || t) + '</span>'; }
+function confBadge(c) { return '<span class="conf ' + c + '">' + esc(c) + '</span>'; }
+function srcChips(sources) { return '<div class="srcs">' + (sources || []).map(s => '<span class="src">' + esc(s) + '</span>').join('') + '</div>'; }
+
+function relRow(r, selfId) {
+  const out = r.source === selfId;
+  const other = out ? r.target : r.source;
+  return '<div class="rel">' +
+    '<div class="top"><span class="chip ' + r.relationship_type + '">' + esc(r.relationship_type) + '</span>' +
+    '<span class="other">' + (out ? '→ ' : '← ') + '<a data-ent="' + esc(other) + '">' + esc(ent[other].name) + '</a></span>' +
+    confBadge(r.confidence) + '</div>' +
+    srcChips(r.sources) +
+    '<div class="vline">verified ' + esc(r.verified_at || '—') + '</div>' +
+    (r.note ? '<div class="rnote">' + esc(r.note) + '</div>' : '') +
+    '</div>';
+}
+
+function showEnt(id) {
+  const e = ent[id];
+  const rels = data.relationships.filter(r => r.source === id || r.target === id);
+  let h = '<div>' + typeBadge(e.type) + ' <span class="meta" style="margin-left:8px">tier ' + e.tier + '</span></div>';
+  h += '<h2 class="title">' + esc(e.name) + '</h2>';
+  if (e.address) h += '<div class="addr">📍 ' + esc(fmtAddr(e.address)) + '</div>';
+  (e.addresses || []).forEach(a => {
+    h += '<div class="addr"><span class="lbl">' + esc(a.label || 'site') + ' · </span>' + esc(fmtAddr(a)) + '</div>';
+  });
+  if (e.service_area) h += '<div class="addr"><span class="lbl">service area · </span>' + esc(e.service_area) + '</div>';
+  if (e.note) h += '<div class="note">' + esc(e.note) + '</div>';
+  if (e.brand_id || e.epic_id || e.fhir_endpoint) {
+    h += '<div class="kv">';
+    if (e.brand_id) h += '<div class="k">brand_id</div><div class="v">' + esc(e.brand_id) + '</div>';
+    if (e.epic_id) h += '<div class="k">epic_id</div><div class="v">' + esc(e.epic_id) + '</div>';
+    if (e.fhir_endpoint) h += '<div class="k">fhir</div><div class="v">' + esc(e.fhir_endpoint) + '</div>';
+    h += '</div>';
+  }
+  h += '<section><h3>Relationships (' + rels.length + ')</h3>';
+  if (!rels.length) h += '<div class="empty">No relationships.</div>';
+  rels.forEach(r => { h += relRow(r, id); });
+  h += '</section>';
+  panelBody.innerHTML = h;
+  bindLinks();
+  openPanel();
+}
+
+function showRel(r) {
+  panelBody.innerHTML =
+    '<div style="display:flex;gap:8px;align-items:center"><span class="chip ' + r.relationship_type + '">' + esc(r.relationship_type) + '</span>' + confBadge(r.confidence) + '</div>' +
+    '<h2 class="title" style="font-size:17px"><a data-ent="' + esc(r.source) + '" style="cursor:pointer">' + esc(ent[r.source].name) + '</a><br>' +
+    '<span style="color:var(--muted);font-size:13px">— ' + esc(r.relationship_type) + ' →</span><br>' +
+    '<a data-ent="' + esc(r.target) + '" style="cursor:pointer">' + esc(ent[r.target].name) + '</a></h2>' +
+    srcChips(r.sources) +
+    '<div class="vline">verified ' + esc(r.verified_at || '—') + '</div>' +
+    (r.note ? '<div class="note">' + esc(r.note) + '</div>' : '');
+  bindLinks();
+  openPanel();
+}
+
+function bindLinks() {
+  panelBody.querySelectorAll('[data-ent]').forEach(a => {
+    a.addEventListener('click', () => { const id = a.getAttribute('data-ent'); if (ent[id]) showEnt(id); });
+  });
+}
+function openPanel() { panel.classList.add('open'); }
+function closePanel() { panel.classList.remove('open'); }
+document.getElementById('panelClose').onclick = closePanel;
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closePanel(); });
+
+// ─── Init ─────────────────────────────────────────────────────
+(async function init() {
+  try {
+    const res = await fetch('/api/systems');
+    const systems = await res.json();
+    const sel = document.getElementById('sysSelect');
+    systems.forEach(s => {
+      const o = document.createElement('option');
+      o.value = s.id; o.textContent = s.name;
+      sel.appendChild(o);
+    });
+    sel.value = systems.some(s => s.id === 'uw-medicine') ? 'uw-medicine' : (systems[0] && systems[0].id);
+    sel.onchange = () => loadSystem(sel.value);
+    await loadSystem(sel.value);
+  } catch (err) {
+    document.getElementById('sysSub').textContent = 'Failed to load: ' + err.message;
+  }
+})();
+</script>
 </body>
 </html>
