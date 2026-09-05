@@ -1,0 +1,587 @@
+{
+  "source": {
+    "name": "Epic FHIR Brands Bundle (open platform)",
+    "url": "https://open.epic.com/Endpoints/Brands",
+    "bundle_id": "epic-endpoint-brands-v1",
+    "last_updated": "2026-09-05T03:00:03.5275258-05:00",
+    "total_entries_in_bundle": null,
+    "sha256_of_full_bundle": "44bad3cb8190a37f8bdd70b7d260042d418d7ac848a2b1530e0d5c9dc10b4092"
+  },
+  "brand": {
+    "name": "UW Medicine",
+    "uuid": "68ff3f69-42cc-4cb7-9dad-1e9cd768e413",
+    "epic_brand_identifier": "255",
+    "fhir_endpoint": "https://fhir.epic.medical.washington.edu/FHIR-Proxy/UWM/api/FHIR/R4",
+    "fhir_endpoint_uuid": "8d2f6658-7c51-4527-a117-fb67fc96fbca"
+  },
+  "total_locations": 47,
+  "groups": {
+    "Fred Hutchinson Cancer Center": {
+      "count": 10,
+      "locations": [
+        {
+          "name": "Fred Hutch Cancer Center- UW Montlake",
+          "uuid": "91ed85e0-1e7a-499c-9abb-9e82ee93631b",
+          "address": {
+            "street": "Fred Hutch Cancer Center- UW Montlake, 1959 NE Pacific St",
+            "city": "Seattle",
+            "state": "WA",
+            "zip": "98195"
+          },
+          "active": true
+        },
+        {
+          "name": "Fred Hutch Evergreen Health",
+          "uuid": "467dccb9-6237-4544-8167-73791cf672b6",
+          "address": {
+            "street": "Fred Hutch Evergreen Health, 12040 NE 128th St, Suite Silver 1600",
+            "city": "Kirkland",
+            "state": "WA",
+            "zip": "98034-3013"
+          },
+          "active": true
+        },
+        {
+          "name": "Fred Hutch MRI at Valley Street",
+          "uuid": "0a319158-7aad-48f5-bf88-0e8a69b3748f",
+          "address": {
+            "street": "Fred Hutch MRI at Valley Street, 1209 Valley St",
+            "city": "Seattle",
+            "state": "WA",
+            "zip": "98109"
+          },
+          "active": true
+        },
+        {
+          "name": "Fred Hutch Northwest Hospital",
+          "uuid": "32bfef00-e3a0-4849-a07c-ffd5166d7e2e",
+          "address": {
+            "street": "Fred Hutch Northwest Hospital, 1560 N 115th St, Suite G-16",
+            "city": "Seattle",
+            "state": "WA",
+            "zip": "98133-8414"
+          },
+          "active": true
+        },
+        {
+          "name": "Fred Hutch Overlake Cancer Center",
+          "uuid": "af1be30e-309e-41ca-b1df-3efb4f6bc223",
+          "address": {
+            "street": "Fred Hutch Overlake Cancer Center, 1135 116th Ave NE\r\nSte 250",
+            "city": "Bellevue",
+            "state": "WA",
+            "zip": "98004-4695"
+          },
+          "active": true
+        },
+        {
+          "name": "Fred Hutch Peninsula",
+          "uuid": "ba668168-0171-43c5-9fab-aa72df0e656e",
+          "address": {
+            "street": "Fred Hutch Peninsula, 19917 7TH AVE",
+            "city": "Poulsbo",
+            "state": "WA",
+            "zip": "98370-6555"
+          },
+          "active": true
+        },
+        {
+          "name": "Fred Hutch Wellness Center- Arnold Building",
+          "uuid": "1d490726-8818-4dfa-bf39-75a743ce48a7",
+          "address": {
+            "street": "Fred Hutch Wellness Center- Arnold Building, 1100 Fairview Ave N",
+            "city": "Seattle",
+            "state": "WA",
+            "zip": "98109-4433"
+          },
+          "active": true
+        },
+        {
+          "name": "Fred Hutch- Issaquah",
+          "uuid": "0c9b4b25-cb93-4b25-bec5-0ea7513b19e8",
+          "address": {
+            "street": "Fred Hutch- Issaquah, 1740 NW Maple Street, Suite 211",
+            "city": "Issaquah",
+            "state": "WA",
+            "zip": "98027-8127"
+          },
+          "active": true
+        },
+        {
+          "name": "Fred Hutch- Proton",
+          "uuid": "76ab6bf3-1a07-4cde-99ec-00f2fcf618e8",
+          "address": {
+            "street": "Fred Hutch- Proton, 1570 N 115th Street",
+            "city": "Seattle",
+            "state": "WA",
+            "zip": "98133-8401"
+          },
+          "active": true
+        },
+        {
+          "name": "Fred Hutchinson Cancer Center- South Lake Union",
+          "uuid": "2e4085f0-75fd-4537-b466-458bc1bbc30e",
+          "address": {
+            "street": "Fred Hutchinson Cancer Center- South Lake Union, 825 Eastlake Ave E",
+            "city": "Seattle",
+            "state": "WA",
+            "zip": "98109"
+          },
+          "active": true
+        }
+      ]
+    },
+    "Hall Health Care Center": {
+      "count": 1,
+      "locations": [
+        {
+          "name": "Hall Health Care Center - Washington",
+          "uuid": "b7eb158b-0e9b-44f5-8792-3ee28056bf6f",
+          "address": {
+            "street": "Hall Health Care Center - Washington, 4060 NE Stevens Way",
+            "city": "Seattle",
+            "state": "WA",
+            "zip": "98195"
+          },
+          "active": true
+        }
+      ]
+    },
+    "Harborview Medical Center": {
+      "count": 11,
+      "locations": [
+        {
+          "name": "HMC HOBSON HEART INSTITUTE",
+          "uuid": "e860a293-d312-4a4d-b620-7923f22b7c4e",
+          "address": {
+            "street": "HMC HOBSON HEART INSTITUTE, 2120 S Plum St",
+            "city": "Seattle",
+            "state": "WA",
+            "zip": "98144"
+          },
+          "active": true
+        },
+        {
+          "name": "HMC MADISON KITSAP SATELLITE CHI FRANCISCAN",
+          "uuid": "4f6fb59c-700a-44c5-974e-a042310af697",
+          "address": {
+            "street": "HMC MADISON KITSAP SATELLITE CHI FRANCISCAN, 4207 Kitsap Way",
+            "city": "Bremerton",
+            "state": "WA",
+            "zip": "98312"
+          },
+          "active": true
+        },
+        {
+          "name": "HMC NINTH & JEFFERSON BUILDING",
+          "uuid": "ab1cd8a1-3ffb-4380-a12e-4a8a75fc78a1",
+          "address": {
+            "street": "HMC NINTH & JEFFERSON BUILDING, 908 JEFFERSON ST",
+            "city": "Seattle",
+            "state": "WA",
+            "zip": "98104"
+          },
+          "active": true
+        },
+        {
+          "name": "HMC PATRICIA STEEL BUILDING",
+          "uuid": "fad45c97-5e92-409b-9411-de33529fedf1",
+          "address": {
+            "street": "HMC PATRICIA STEEL BUILDING, 401 Broadway",
+            "city": "Seattle",
+            "state": "WA",
+            "zip": "98122"
+          },
+          "active": true
+        },
+        {
+          "name": "HMC PIONEER SQUARE CLINIC",
+          "uuid": "86610476-3be3-42db-a830-6d739497de66",
+          "address": {
+            "street": "HMC PIONEER SQUARE CLINIC, 2028 3RD Ave",
+            "city": "Seattle",
+            "state": "WA",
+            "zip": "98104"
+          },
+          "active": true
+        },
+        {
+          "name": "HMC PIONEER SQUARE FIELD BASED PRIMARY CARE CLINIC",
+          "uuid": "5ac0546a-e651-407a-bd42-db5181475b42",
+          "address": {
+            "street": "HMC PIONEER SQUARE FIELD BASED PRIMARY CARE CLINIC, 206 3RD AVE S",
+            "city": "Seattle",
+            "state": "WA",
+            "zip": "98104"
+          },
+          "active": true
+        },
+        {
+          "name": "HMC PIONEER SQUARE ROBERT CLEWIS CLINIC",
+          "uuid": "89629dd4-9382-4330-86d2-28596e4cd549",
+          "address": {
+            "street": "HMC PIONEER SQUARE ROBERT CLEWIS CLINIC, 2124 4th Ave",
+            "city": "Seattle",
+            "state": "WA",
+            "zip": "98121"
+          },
+          "active": true
+        },
+        {
+          "name": "HMC PROSTHETIC AND ORTHOTIC CLINIC",
+          "uuid": "2593ebf7-bf08-46ed-85c6-9572d740495a",
+          "address": {
+            "street": "HMC PROSTHETIC AND ORTHOTIC CLINIC, 501 EASTLAKE AVE",
+            "city": "Seattle",
+            "state": "WA",
+            "zip": "98109"
+          },
+          "active": true
+        },
+        {
+          "name": "HMC RESPITE CARE EXPANSION",
+          "uuid": "0bcd93e8-fc1f-497f-95e5-fee72b8b3ae0",
+          "address": {
+            "street": "HMC RESPITE CARE EXPANSION, 800 JEFFERSON ST",
+            "city": "Seattle",
+            "state": "WA",
+            "zip": "98104"
+          },
+          "active": true
+        },
+        {
+          "name": "HMC SHE (SAFE HEALTHY EMPOWERED) MOBILE CLINIC",
+          "uuid": "24b7671b-4b62-4698-b171-09327426c279",
+          "address": {
+            "street": "HMC SHE (SAFE HEALTHY EMPOWERED) MOBILE CLINIC, 8914 Aurora Ave N",
+            "city": "Seattle",
+            "state": "WA",
+            "zip": "98103"
+          },
+          "active": true
+        },
+        {
+          "name": "Harborview Medical Center - Washington",
+          "uuid": "d3a5fb8c-08a1-4679-8d87-40e64f9f7692",
+          "address": {
+            "street": "Harborview Medical Center - Washington, 325 9th Ave",
+            "city": "Seattle",
+            "state": "WA",
+            "zip": "98104"
+          },
+          "active": true
+        }
+      ]
+    },
+    "Other UW Medicine Locations": {
+      "count": 6,
+      "locations": [
+        {
+          "name": "UW Medical Center - Northwest Heart Institute",
+          "uuid": "637c0820-ad8c-49eb-8a3a-f614ae071d04",
+          "address": {
+            "street": "UW Medical Center - Northwest Heart Institute, 1536 N 115 St, STE 200",
+            "city": "Seattle",
+            "state": "WA",
+            "zip": "98133"
+          },
+          "active": true
+        },
+        {
+          "name": "UW Medicine - Washington",
+          "uuid": "fbed6714-1aa6-4af0-834d-06126e3c2e54",
+          "address": {
+            "street": "UW Medicine - Washington, 185 NE Stevens Way",
+            "city": "Seattle",
+            "state": "WA",
+            "zip": "98195"
+          },
+          "active": true
+        },
+        {
+          "name": "UW Medicine Arlington MFM Clinic",
+          "uuid": "0441e06a-348b-46b8-88be-90dfe7fe34cf",
+          "address": {
+            "street": "UW Medicine Arlington MFM Clinic, 3823 172nd St NE",
+            "city": "Arlington",
+            "state": "WA",
+            "zip": "98223-7735"
+          },
+          "active": true
+        },
+        {
+          "name": "UW Medicine Primary Care- Ballard",
+          "uuid": "f681156e-9ff3-4c52-ae40-2589c3c288b7",
+          "address": {
+            "street": "UW Medicine Primary Care- Ballard, 1455 NW Leary Way, Suite 250",
+            "city": "Seattle",
+            "state": "WA",
+            "zip": "98107"
+          },
+          "active": true
+        },
+        {
+          "name": "UW Medicine Primary Care- Lopez Island",
+          "uuid": "1c7d18ab-6fca-4986-86ab-d53d84ca9fb4",
+          "address": {
+            "street": "UW Medicine Primary Care- Lopez Island, 103 Washburn Place",
+            "city": "Lopez Island",
+            "state": "WA",
+            "zip": "98261"
+          },
+          "active": true
+        },
+        {
+          "name": "University of Washington Medicine",
+          "uuid": "2ee2852f-2d6c-4bb6-82c7-c6f7f594a2c8",
+          "address": {
+            "street": "University of Washington Medicine, 1959 NE Pacific St",
+            "city": "Seattle",
+            "state": "WA",
+            "zip": "98195"
+          },
+          "active": true
+        }
+      ]
+    },
+    "UW Medical Center - Eastside": {
+      "count": 1,
+      "locations": [
+        {
+          "name": "UWMC EASTSIDE SPECIALTY CLINIC",
+          "uuid": "bb1d3084-48bd-4e4a-ae84-33ff387e119a",
+          "address": {
+            "street": "UWMC EASTSIDE SPECIALTY CLINIC, 3100 Northup Way",
+            "city": "Bellevue",
+            "state": "WA",
+            "zip": "98004"
+          },
+          "active": true
+        }
+      ]
+    },
+    "UW Medical Center - Montlake": {
+      "count": 2,
+      "locations": [
+        {
+          "name": "UWMC ROOSEVELT 4225",
+          "uuid": "86beee7f-6821-4ba3-af0c-1ae2012c8999",
+          "address": {
+            "street": "UWMC ROOSEVELT 4225, 4225 ROOSEVELT WAY NE",
+            "city": "Seattle",
+            "state": "WA",
+            "zip": "98105"
+          },
+          "active": true
+        },
+        {
+          "name": "UWMC STADIUM SPORTS MEDICINE",
+          "uuid": "4b8fa521-6509-41f1-99ac-4029d5781f16",
+          "address": {
+            "street": "UWMC STADIUM SPORTS MEDICINE, 3800 MONTLAKE BLVD",
+            "city": "Seattle",
+            "state": "WA",
+            "zip": "98195"
+          },
+          "active": true
+        }
+      ]
+    },
+    "UW Medical Center - Northwest": {
+      "count": 3,
+      "locations": [
+        {
+          "name": "UWMC NW MCMURRAY MEDICAL BUILDING",
+          "uuid": "5806281c-e13a-4543-96d2-4c558b3ec150",
+          "address": {
+            "street": "UWMC NW MCMURRAY MEDICAL BUILDING, 1536 N 115th St",
+            "city": "Seattle",
+            "state": "WA",
+            "zip": "98133"
+          },
+          "active": true
+        },
+        {
+          "name": "UWMC NW MEDICAL OFFICE BUILDING",
+          "uuid": "f35e6f0c-4de7-4656-8dde-dd56843bf733",
+          "address": {
+            "street": "UWMC NW MEDICAL OFFICE BUILDING, 1560 N 115TH ST",
+            "city": "Seattle",
+            "state": "WA",
+            "zip": "98133"
+          },
+          "active": true
+        },
+        {
+          "name": "UWMC NW OUTPATIENT MEDICAL CENTER",
+          "uuid": "2238e60a-5ce0-4db4-82cb-46f786edd577",
+          "address": {
+            "street": "UWMC NW OUTPATIENT MEDICAL CENTER, 10330 Meridian AVE N",
+            "city": "Seattle",
+            "state": "WA",
+            "zip": "98133"
+          },
+          "active": true
+        }
+      ]
+    },
+    "UW Medicine Alaska": {
+      "count": 1,
+      "locations": [
+        {
+          "name": "UW MEDICINE ALASKA TRANSPLANT CLINIC",
+          "uuid": "73a4490f-8eb1-41cf-844f-7571b614c5b6",
+          "address": {
+            "street": "UW MEDICINE ALASKA TRANSPLANT CLINIC, 2735 TUDOR ROAD",
+            "city": "Anchorage",
+            "state": "AK",
+            "zip": "99507"
+          },
+          "active": true
+        }
+      ]
+    },
+    "UW Medicine Primary Care": {
+      "count": 11,
+      "locations": [
+        {
+          "name": "UWMPC FACTORIA",
+          "uuid": "5255fe6b-711d-4fdc-b447-7e14bc897910",
+          "address": {
+            "street": "UWMPC FACTORIA, 13231 SE 36TH ST",
+            "city": "Bellevue",
+            "state": "WA",
+            "zip": "98006"
+          },
+          "active": true
+        },
+        {
+          "name": "UWMPC FEDERAL WAY",
+          "uuid": "05010950-f0ba-4466-8fa5-1b258aac9b9e",
+          "address": {
+            "street": "UWMPC FEDERAL WAY, 32018 23RD AVE S",
+            "city": "Federal Way",
+            "state": "WA",
+            "zip": "98003"
+          },
+          "active": true
+        },
+        {
+          "name": "UWMPC FREMONT",
+          "uuid": "0dad9544-e4eb-450e-a695-473cc486b4b3",
+          "address": {
+            "street": "UWMPC FREMONT, 459 N 35th St",
+            "city": "Seattle",
+            "state": "WA",
+            "zip": "98103"
+          },
+          "active": true
+        },
+        {
+          "name": "UWMPC KENT/DES MOINES",
+          "uuid": "33552195-1e23-4537-af28-a9db6a82b65e",
+          "address": {
+            "street": "UWMPC KENT/DES MOINES, 23213 PACIFIC HWY S",
+            "city": "Kent",
+            "state": "WA",
+            "zip": "98032"
+          },
+          "active": true
+        },
+        {
+          "name": "UWMPC KIRKLAND",
+          "uuid": "8377c720-4dcf-4163-86fb-b6ef1c676beb",
+          "address": {
+            "street": "UWMPC KIRKLAND, 620 KIRKLAND WAY",
+            "city": "Kirkland",
+            "state": "WA",
+            "zip": "98033"
+          },
+          "active": true
+        },
+        {
+          "name": "UWMPC MOUNTLAKE TERRACE",
+          "uuid": "5affaf25-aa1b-4275-b098-62182d7f792c",
+          "address": {
+            "street": "UWMPC MOUNTLAKE TERRACE, 24360 Van Ry Blvd",
+            "city": "Mountlake Terrace",
+            "state": "WA",
+            "zip": "98043"
+          },
+          "active": true
+        },
+        {
+          "name": "UWMPC NORTHGATE",
+          "uuid": "4839e572-a566-4dc6-a48e-3fbe48c4e7e8",
+          "address": {
+            "street": "UWMPC NORTHGATE, 314 NE THORNTON PLACE",
+            "city": "Seattle",
+            "state": "WA",
+            "zip": "98125"
+          },
+          "active": true
+        },
+        {
+          "name": "UWMPC RAVENNA",
+          "uuid": "a64e9039-7f2b-4a65-a10e-16a9f217e055",
+          "address": {
+            "street": "UWMPC RAVENNA, 4915 25TH AVE NE 300 W",
+            "city": "Seattle",
+            "state": "WA",
+            "zip": "98105"
+          },
+          "active": true
+        },
+        {
+          "name": "UWMPC SHORELINE",
+          "uuid": "47c5cc3c-fd69-465e-9b3d-ed329e8882d1",
+          "address": {
+            "street": "UWMPC SHORELINE, 1355 N 205TH ST",
+            "city": "Shoreline",
+            "state": "WA",
+            "zip": "98133"
+          },
+          "active": true
+        },
+        {
+          "name": "UWMPC SOUTH LAKE UNION",
+          "uuid": "208bbb05-e741-42f2-be0a-4dc4ae618bc7",
+          "address": {
+            "street": "UWMPC SOUTH LAKE UNION, 750 REPUBLICAN ST",
+            "city": "Seattle",
+            "state": "WA",
+            "zip": "98109"
+          },
+          "active": true
+        },
+        {
+          "name": "UWMPC WOODINVILLE",
+          "uuid": "3350300a-f18b-4966-96be-a9be38dace68",
+          "address": {
+            "street": "UWMPC WOODINVILLE, 17638 140TH AVE NE",
+            "city": "Woodinville",
+            "state": "WA",
+            "zip": "98072"
+          },
+          "active": true
+        }
+      ]
+    },
+    "UW Medicine Spokane": {
+      "count": 1,
+      "locations": [
+        {
+          "name": "UWM LIVER CLINIC AT SPOKANE",
+          "uuid": "db5465c0-2e3c-41cb-aa1b-1d95b24cb8f8",
+          "address": {
+            "street": "UWM LIVER CLINIC AT SPOKANE, 1415 N Houck Road",
+            "city": "Spokane",
+            "state": "WA",
+            "zip": "99216"
+          },
+          "active": true
+        }
+      ]
+    }
+  }
+}

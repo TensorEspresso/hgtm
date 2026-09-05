@@ -2,7 +2,7 @@
   "graph_version": "2.1",
   "health_system": "UW Medicine",
   "extracted_at": "2026-09-05",
-  "source": "Epic FHIR Brands Bundle (2026-06) + uwmedicine.org + CMS + Wikipedia + CHPW 2026 provider directory + UW Medicine patient education roster",
+  "source": "Epic FHIR Brands Bundle (open.epic.com/Endpoints/Brands, captured 2026-09-05) + UW Medicine patient-education roster (2020) + CHPW Cascade Select 2026 provider directory (captured 2026-09-05) + targeted web verification (2026-09-05). Artifact captures + source map: systems/uw-medicine/sources/ + provenance.md",
   "summary": {
     "total_entities": 22,
     "total_relationships": 21,
@@ -12,8 +12,8 @@
       "partners_with": 2
     },
     "by_confidence": {
-      "high": 20,
-      "medium": 1
+      "high": 19,
+      "medium": 2
     },
     "tiers": {
       "tier_0": 1,
@@ -105,7 +105,7 @@
       "type": "clinic_network",
       "tier": 1,
       "service_area": "Greater Seattle / Puget Sound (13 sites: Seattle, Bellevue, Kent, Federal Way, Olympia, Issaquah, Woodinville, Mountlake Terrace)",
-      "note": "Network of community primary care and urgent care clinics within UW Medicine; 1.3M+ patients seen per year. Formerly branded 'UW Neighborhood Clinics', now 'UW Medicine Primary Care'.",
+      "note": "Network of community primary care and urgent care clinics within UW Medicine (roster per UW patient-education PDF, clinician review 2020-03; 13 sites). Formerly branded 'UW Neighborhood Clinics', now 'UW Medicine Primary Care'. See provenance.md for source captures and known discrepancies.",
       "addresses": [
         {
           "label": "Ballard",
@@ -480,7 +480,8 @@
       "confidence": "high",
       "sources": [
         "uwmedicine.org",
-        "npi_registry"
+        "npi_registry",
+        "web_verification_2026-09-05"
       ],
       "verified_at": "2026-09-05",
       "note": "UW Physicians is the physician practice group of UW Medicine (NPI 1407291446 / 1811332539)."
@@ -502,8 +503,9 @@
       "relationship_type": "owns",
       "confidence": "high",
       "sources": [
-        "uwmedicine.org",
-        "healthonline.washington.edu (UW Medicine patient education, clinic roster)"
+        "epic_brands_bundle_2026-09-05",
+        "uw_patient_ed_roster_2020 (names+phones only, no addresses)",
+        "chpw_cascade_select_directory_2026"
       ],
       "verified_at": "2026-09-05"
     },
@@ -513,8 +515,9 @@
       "relationship_type": "owns",
       "confidence": "high",
       "sources": [
-        "uwmedicine.org",
-        "healthonline.washington.edu (UW Medicine patient education, clinic roster)"
+        "chpw_cascade_select_directory_2026",
+        "uw_patient_ed_roster_2020 (names+phones only, no addresses)",
+        "web_verification_2026-09-05"
       ],
       "verified_at": "2026-09-05"
     },
@@ -524,8 +527,9 @@
       "relationship_type": "owns",
       "confidence": "high",
       "sources": [
-        "uwmedicine.org",
-        "healthonline.washington.edu (UW Medicine patient education, clinic roster)"
+        "epic_brands_bundle_2026-09-05",
+        "uw_patient_ed_roster_2020 (names+phones only, no addresses)",
+        "chpw_cascade_select_directory_2026"
       ],
       "verified_at": "2026-09-05"
     },
@@ -535,8 +539,9 @@
       "relationship_type": "owns",
       "confidence": "high",
       "sources": [
-        "uwmedicine.org",
-        "healthonline.washington.edu (UW Medicine patient education, clinic roster)"
+        "epic_brands_bundle_2026-09-05",
+        "uw_patient_ed_roster_2020 (names+phones only, no addresses)",
+        "chpw_cascade_select_directory_2026"
       ],
       "verified_at": "2026-09-05"
     },
@@ -546,8 +551,10 @@
       "relationship_type": "owns",
       "confidence": "high",
       "sources": [
-        "uwmedicine.org",
-        "healthonline.washington.edu (UW Medicine patient education, clinic roster)"
+        "epic_brands_bundle_2026-09-05",
+        "uw_patient_ed_roster_2020 (names+phones only, no addresses)",
+        "chpw_cascade_select_directory_2026",
+        "web_verification_2026-09-05"
       ],
       "verified_at": "2026-09-05"
     },
@@ -557,8 +564,9 @@
       "relationship_type": "owns",
       "confidence": "high",
       "sources": [
-        "uwmedicine.org",
-        "healthonline.washington.edu (UW Medicine patient education, clinic roster)"
+        "chpw_cascade_select_directory_2026",
+        "uw_patient_ed_roster_2020 (names+phones only, no addresses)",
+        "web_verification_2026-09-05"
       ],
       "verified_at": "2026-09-05"
     },
@@ -568,8 +576,9 @@
       "relationship_type": "owns",
       "confidence": "high",
       "sources": [
-        "uwmedicine.org",
-        "healthonline.washington.edu (UW Medicine patient education, clinic roster)"
+        "epic_brands_bundle_2026-09-05",
+        "uw_patient_ed_roster_2020 (names+phones only, no addresses)",
+        "chpw_cascade_select_directory_2026"
       ],
       "verified_at": "2026-09-05"
     },
@@ -579,8 +588,10 @@
       "relationship_type": "owns",
       "confidence": "high",
       "sources": [
-        "uwmedicine.org",
-        "healthonline.washington.edu (UW Medicine patient education, clinic roster)"
+        "epic_brands_bundle_2026-09-05",
+        "chpw_cascade_select_directory_2026",
+        "mltnews.com 2022-05-11 (relocation article)",
+        "web_verification_2026-09-05"
       ],
       "verified_at": "2026-09-05"
     },
@@ -590,8 +601,9 @@
       "relationship_type": "owns",
       "confidence": "high",
       "sources": [
-        "uwmedicine.org",
-        "healthonline.washington.edu (UW Medicine patient education, clinic roster)"
+        "epic_brands_bundle_2026-09-05",
+        "uw_patient_ed_roster_2020 (names+phones only, no addresses)",
+        "chpw_cascade_select_directory_2026"
       ],
       "verified_at": "2026-09-05"
     },
@@ -599,12 +611,13 @@
       "source": "uw-neighborhood-clinics",
       "target": "nc-olympia",
       "relationship_type": "owns",
-      "confidence": "high",
+      "confidence": "medium",
       "sources": [
-        "uwmedicine.org",
-        "healthonline.washington.edu (UW Medicine patient education, clinic roster)"
+        "uw_patient_ed_roster_2020 (names+phones only, no addresses)",
+        "web_verification_2026-09-05"
       ],
-      "verified_at": "2026-09-05"
+      "verified_at": "2026-09-05",
+      "note": "Listed in the 2020 UW Medicine roster; address 3525 Ensign Rd NE, Ste B, Olympia WA 98506 per 2026-09-05 web verification (opennpi + 2016 opening article). ABSENT from both 2026 captures (Epic bundle 2026-09-05 and CHPW directory 2026) — status unverified, review queue."
     },
     {
       "source": "uw-neighborhood-clinics",
@@ -612,8 +625,9 @@
       "relationship_type": "owns",
       "confidence": "high",
       "sources": [
-        "uwmedicine.org",
-        "healthonline.washington.edu (UW Medicine patient education, clinic roster)"
+        "epic_brands_bundle_2026-09-05",
+        "uw_patient_ed_roster_2020 (names+phones only, no addresses)",
+        "chpw_cascade_select_directory_2026"
       ],
       "verified_at": "2026-09-05"
     },
@@ -623,8 +637,10 @@
       "relationship_type": "owns",
       "confidence": "high",
       "sources": [
-        "uwmedicine.org",
-        "healthonline.washington.edu (UW Medicine patient education, clinic roster)"
+        "epic_brands_bundle_2026-09-05",
+        "uw_patient_ed_roster_2020 (names+phones only, no addresses)",
+        "chpw_cascade_select_directory_2026",
+        "web_verification_2026-09-05"
       ],
       "verified_at": "2026-09-05"
     },
@@ -634,8 +650,9 @@
       "relationship_type": "owns",
       "confidence": "high",
       "sources": [
-        "uwmedicine.org",
-        "healthonline.washington.edu (UW Medicine patient education, clinic roster)"
+        "epic_brands_bundle_2026-09-05",
+        "uw_patient_ed_roster_2020 (names+phones only, no addresses)",
+        "chpw_cascade_select_directory_2026"
       ],
       "verified_at": "2026-09-05"
     }
