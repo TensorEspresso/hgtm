@@ -1,26 +1,27 @@
 {
-  "graph_version": "2.0",
+  "graph_version": "2.1",
   "health_system": "UW Medicine",
-  "extracted_at": "2026-06-26",
-  "source": "Epic FHIR Brands Bundle + uwmedicine.org + CMS + Wikipedia validation",
+  "extracted_at": "2026-09-05",
+  "source": "Epic FHIR Brands Bundle (2026-06) + uwmedicine.org + CMS + Wikipedia + CHPW 2026 provider directory + UW Medicine patient education roster",
   "summary": {
-    "total_entities": 7,
-    "total_relationships": 6,
+    "total_entities": 22,
+    "total_relationships": 21,
     "by_relationship_type": {
-      "owns": 3,
+      "owns": 18,
       "manages": 1,
       "partners_with": 2
     },
     "by_confidence": {
-      "high": 5,
+      "high": 20,
       "medium": 1
     },
     "tiers": {
       "tier_0": 1,
-      "tier_1": 4,
-      "tier_2": 2
+      "tier_1": 5,
+      "tier_2": 3,
+      "tier_3": 13
     },
-    "note": "Tier 1: hospitals. Tier 2: specialty centers / air ambulance. Physician groups excluded."
+    "note": "Tier 1: hospitals + clinic network. Tier 2: physician group, specialty centers, air ambulance. Tier 3: network clinic sites (13)."
   },
   "entities": [
     {
@@ -92,6 +93,114 @@
       "note": "Owned by Public Hospital District No. 1 (separate governance). Strategic alliance with UW Medicine ending Dec 31, 2026."
     },
     {
+      "id": "uw-physicians",
+      "name": "UW Physicians",
+      "type": "physician_group",
+      "tier": 2,
+      "note": "Integrated physician practice group within UW Medicine; primary care and specialty providers across all UW Medicine sites. HQ in the Health Sciences Center (1959 NE Pacific St, Seattle). NPI 1407291446 / 1811332539."
+    },
+    {
+      "id": "uw-neighborhood-clinics",
+      "name": "UW Neighborhood Clinics",
+      "type": "clinic_network",
+      "tier": 1,
+      "service_area": "Greater Seattle / Puget Sound (13 sites: Seattle, Bellevue, Kent, Federal Way, Olympia, Issaquah, Woodinville, Mountlake Terrace)",
+      "note": "Network of community primary care and urgent care clinics within UW Medicine; 1.3M+ patients seen per year. Formerly branded 'UW Neighborhood Clinics', now 'UW Medicine Primary Care'.",
+      "addresses": [
+        {
+          "label": "Ballard",
+          "street": "1455 NW Leary Way, Ste 250",
+          "city": "Seattle",
+          "state": "WA",
+          "zip": "98107"
+        },
+        {
+          "label": "Belltown",
+          "street": "2505 2nd Ave, Ste 200",
+          "city": "Seattle",
+          "state": "WA",
+          "zip": "98121"
+        },
+        {
+          "label": "Factoria",
+          "street": "13231 SE 36th St, Ste 110",
+          "city": "Bellevue",
+          "state": "WA",
+          "zip": "98006"
+        },
+        {
+          "label": "Federal Way",
+          "street": "32018 23rd Ave S",
+          "city": "Federal Way",
+          "state": "WA",
+          "zip": "98003"
+        },
+        {
+          "label": "Fremont",
+          "street": "459 N 35th St, Ste 203",
+          "city": "Seattle",
+          "state": "WA",
+          "zip": "98103"
+        },
+        {
+          "label": "Issaquah",
+          "street": "1740 NW Maple St, Ste 100",
+          "city": "Issaquah",
+          "state": "WA",
+          "zip": "98027"
+        },
+        {
+          "label": "Kent-Des Moines",
+          "street": "23213 Pacific Hwy S",
+          "city": "Kent",
+          "state": "WA",
+          "zip": "98032"
+        },
+        {
+          "label": "Mountlake Terrace",
+          "street": "24360 Van Ry Blvd, Ste 111",
+          "city": "Mountlake Terrace",
+          "state": "WA",
+          "zip": "98043"
+        },
+        {
+          "label": "Northgate",
+          "street": "314 NE Thornton Pl",
+          "city": "Seattle",
+          "state": "WA",
+          "zip": "98125"
+        },
+        {
+          "label": "Olympia",
+          "street": "3525 Ensign Rd NE, Ste B",
+          "city": "Olympia",
+          "state": "WA",
+          "zip": "98506"
+        },
+        {
+          "label": "Ravenna",
+          "street": "4915 25th Ave NE, Ste 300",
+          "city": "Seattle",
+          "state": "WA",
+          "zip": "98105"
+        },
+        {
+          "label": "Shoreline",
+          "street": "1355 N 205th St",
+          "city": "Shoreline",
+          "state": "WA",
+          "zip": "98133"
+        },
+        {
+          "label": "Woodinville",
+          "street": "17638 140th Ave NE",
+          "city": "Woodinville",
+          "state": "WA",
+          "zip": "98072"
+        }
+      ]
+    },
+    {
       "id": "fred-hutch",
       "name": "Fred Hutchinson Cancer Center",
       "type": "specialty_center",
@@ -117,6 +226,175 @@
       },
       "service_area": "WWAMI region",
       "note": "UW Medicine affiliate. Aviation services operated by Air Methods since 2015. 3,600+ patient transports annually across WWAMI region."
+    },
+    {
+      "id": "nc-ballard",
+      "name": "UW Medicine Primary Care at Ballard",
+      "type": "clinic",
+      "tier": 3,
+      "address": {
+        "street": "1455 NW Leary Way, Ste 250",
+        "city": "Seattle",
+        "state": "WA",
+        "zip": "98107"
+      },
+      "note": "Primary & urgent care, Ballard. Open Monday-Saturday."
+    },
+    {
+      "id": "nc-belltown",
+      "name": "UW Medicine Primary Care at Belltown",
+      "type": "clinic",
+      "tier": 3,
+      "address": {
+        "street": "2505 2nd Ave, Ste 200",
+        "city": "Seattle",
+        "state": "WA",
+        "zip": "98121"
+      },
+      "note": "Primary care, Belltown district."
+    },
+    {
+      "id": "nc-factoria",
+      "name": "UW Medicine Primary Care at Factoria",
+      "type": "clinic",
+      "tier": 3,
+      "address": {
+        "street": "13231 SE 36th St, Ste 110",
+        "city": "Bellevue",
+        "state": "WA",
+        "zip": "98006"
+      },
+      "note": "Primary care, Factoria/Bellevue. Formerly UW Neighborhood Factoria Clinic."
+    },
+    {
+      "id": "nc-federal-way",
+      "name": "UW Medicine Primary Care at Federal Way",
+      "type": "clinic",
+      "tier": 3,
+      "address": {
+        "street": "32018 23rd Ave S",
+        "city": "Federal Way",
+        "state": "WA",
+        "zip": "98003"
+      },
+      "note": "Primary & urgent care, Federal Way. Formerly UW Neighborhood Federal Way Clinic."
+    },
+    {
+      "id": "nc-fremont",
+      "name": "UW Medicine Primary Care at Fremont",
+      "type": "clinic",
+      "tier": 3,
+      "address": {
+        "street": "459 N 35th St, Ste 203",
+        "city": "Seattle",
+        "state": "WA",
+        "zip": "98103"
+      },
+      "note": "Primary care, Fremont. Formerly UW Neighborhood Fremont Clinic."
+    },
+    {
+      "id": "nc-issaquah",
+      "name": "UW Medicine Primary Care at Issaquah",
+      "type": "clinic",
+      "tier": 3,
+      "address": {
+        "street": "1740 NW Maple St, Ste 100",
+        "city": "Issaquah",
+        "state": "WA",
+        "zip": "98027"
+      },
+      "note": "Primary & urgent care, Issaquah. Formerly UW Neighborhood Issaquah Clinic."
+    },
+    {
+      "id": "nc-kent-des-moines",
+      "name": "UW Medicine Kent-Des Moines Clinic",
+      "type": "clinic",
+      "tier": 3,
+      "address": {
+        "street": "23213 Pacific Hwy S",
+        "city": "Kent",
+        "state": "WA",
+        "zip": "98032"
+      },
+      "note": "Primary care, Kent-Des Moines. Formerly UW Neighborhood Kent-Des Moines Clinic."
+    },
+    {
+      "id": "nc-mountlake-terrace",
+      "name": "UW Medicine Primary Care at Mountlake Terrace",
+      "type": "clinic",
+      "tier": 3,
+      "address": {
+        "street": "24360 Van Ry Blvd, Ste 111",
+        "city": "Mountlake Terrace",
+        "state": "WA",
+        "zip": "98043"
+      },
+      "note": "Primary care, Mountlake Terrace. Opened spring 2022 as the relocated UW Medicine Primary Care at Lake Forest Park clinic; shares site with UW Medicine Heart Institute."
+    },
+    {
+      "id": "nc-northgate",
+      "name": "UW Medicine Primary Care at Northgate",
+      "type": "clinic",
+      "tier": 3,
+      "address": {
+        "street": "314 NE Thornton Pl",
+        "city": "Seattle",
+        "state": "WA",
+        "zip": "98125"
+      },
+      "note": "Primary care, Northgate. Open six days; urgent care seven. Formerly UW Neighborhood Northgate Clinic."
+    },
+    {
+      "id": "nc-olympia",
+      "name": "UW Medicine Primary Care at Olympia",
+      "type": "clinic",
+      "tier": 3,
+      "address": {
+        "street": "3525 Ensign Rd NE, Ste B",
+        "city": "Olympia",
+        "state": "WA",
+        "zip": "98506"
+      },
+      "note": "Primary care, Olympia. Formerly UW Neighborhood Olympia Clinic."
+    },
+    {
+      "id": "nc-ravenna",
+      "name": "UW Medicine Primary Care at Ravenna",
+      "type": "clinic",
+      "tier": 3,
+      "address": {
+        "street": "4915 25th Ave NE, Ste 300",
+        "city": "Seattle",
+        "state": "WA",
+        "zip": "98105"
+      },
+      "note": "Primary care, Ravenna. Formerly UW Neighborhood Ravenna Clinic."
+    },
+    {
+      "id": "nc-shoreline",
+      "name": "UW Medicine Primary Care at Shoreline",
+      "type": "clinic",
+      "tier": 3,
+      "address": {
+        "street": "1355 N 205th St",
+        "city": "Shoreline",
+        "state": "WA",
+        "zip": "98133"
+      },
+      "note": "Primary care, Shoreline. Formerly UW Neighborhood Shoreline Clinic."
+    },
+    {
+      "id": "nc-woodinville",
+      "name": "UW Medicine Primary Care at Woodinville",
+      "type": "clinic",
+      "tier": 3,
+      "address": {
+        "street": "17638 140th Ave NE",
+        "city": "Woodinville",
+        "state": "WA",
+        "zip": "98072"
+      },
+      "note": "Primary care, Woodinville. Open evenings and Saturdays. Formerly UW Neighborhood Woodinville Clinic."
     }
   ],
   "relationships": [
@@ -194,6 +472,172 @@
         "wikipedia"
       ],
       "verified_at": "2026-06-26"
+    },
+    {
+      "source": "uw-medicine-root",
+      "target": "uw-physicians",
+      "relationship_type": "owns",
+      "confidence": "high",
+      "sources": [
+        "uwmedicine.org",
+        "npi_registry"
+      ],
+      "verified_at": "2026-09-05",
+      "note": "UW Physicians is the physician practice group of UW Medicine (NPI 1407291446 / 1811332539)."
+    },
+    {
+      "source": "uw-medicine-root",
+      "target": "uw-neighborhood-clinics",
+      "relationship_type": "owns",
+      "confidence": "high",
+      "sources": [
+        "uwmedicine.org",
+        "healthonline.washington.edu (UW Medicine patient education, clinic roster)"
+      ],
+      "verified_at": "2026-09-05"
+    },
+    {
+      "source": "uw-neighborhood-clinics",
+      "target": "nc-ballard",
+      "relationship_type": "owns",
+      "confidence": "high",
+      "sources": [
+        "uwmedicine.org",
+        "healthonline.washington.edu (UW Medicine patient education, clinic roster)"
+      ],
+      "verified_at": "2026-09-05"
+    },
+    {
+      "source": "uw-neighborhood-clinics",
+      "target": "nc-belltown",
+      "relationship_type": "owns",
+      "confidence": "high",
+      "sources": [
+        "uwmedicine.org",
+        "healthonline.washington.edu (UW Medicine patient education, clinic roster)"
+      ],
+      "verified_at": "2026-09-05"
+    },
+    {
+      "source": "uw-neighborhood-clinics",
+      "target": "nc-factoria",
+      "relationship_type": "owns",
+      "confidence": "high",
+      "sources": [
+        "uwmedicine.org",
+        "healthonline.washington.edu (UW Medicine patient education, clinic roster)"
+      ],
+      "verified_at": "2026-09-05"
+    },
+    {
+      "source": "uw-neighborhood-clinics",
+      "target": "nc-federal-way",
+      "relationship_type": "owns",
+      "confidence": "high",
+      "sources": [
+        "uwmedicine.org",
+        "healthonline.washington.edu (UW Medicine patient education, clinic roster)"
+      ],
+      "verified_at": "2026-09-05"
+    },
+    {
+      "source": "uw-neighborhood-clinics",
+      "target": "nc-fremont",
+      "relationship_type": "owns",
+      "confidence": "high",
+      "sources": [
+        "uwmedicine.org",
+        "healthonline.washington.edu (UW Medicine patient education, clinic roster)"
+      ],
+      "verified_at": "2026-09-05"
+    },
+    {
+      "source": "uw-neighborhood-clinics",
+      "target": "nc-issaquah",
+      "relationship_type": "owns",
+      "confidence": "high",
+      "sources": [
+        "uwmedicine.org",
+        "healthonline.washington.edu (UW Medicine patient education, clinic roster)"
+      ],
+      "verified_at": "2026-09-05"
+    },
+    {
+      "source": "uw-neighborhood-clinics",
+      "target": "nc-kent-des-moines",
+      "relationship_type": "owns",
+      "confidence": "high",
+      "sources": [
+        "uwmedicine.org",
+        "healthonline.washington.edu (UW Medicine patient education, clinic roster)"
+      ],
+      "verified_at": "2026-09-05"
+    },
+    {
+      "source": "uw-neighborhood-clinics",
+      "target": "nc-mountlake-terrace",
+      "relationship_type": "owns",
+      "confidence": "high",
+      "sources": [
+        "uwmedicine.org",
+        "healthonline.washington.edu (UW Medicine patient education, clinic roster)"
+      ],
+      "verified_at": "2026-09-05"
+    },
+    {
+      "source": "uw-neighborhood-clinics",
+      "target": "nc-northgate",
+      "relationship_type": "owns",
+      "confidence": "high",
+      "sources": [
+        "uwmedicine.org",
+        "healthonline.washington.edu (UW Medicine patient education, clinic roster)"
+      ],
+      "verified_at": "2026-09-05"
+    },
+    {
+      "source": "uw-neighborhood-clinics",
+      "target": "nc-olympia",
+      "relationship_type": "owns",
+      "confidence": "high",
+      "sources": [
+        "uwmedicine.org",
+        "healthonline.washington.edu (UW Medicine patient education, clinic roster)"
+      ],
+      "verified_at": "2026-09-05"
+    },
+    {
+      "source": "uw-neighborhood-clinics",
+      "target": "nc-ravenna",
+      "relationship_type": "owns",
+      "confidence": "high",
+      "sources": [
+        "uwmedicine.org",
+        "healthonline.washington.edu (UW Medicine patient education, clinic roster)"
+      ],
+      "verified_at": "2026-09-05"
+    },
+    {
+      "source": "uw-neighborhood-clinics",
+      "target": "nc-shoreline",
+      "relationship_type": "owns",
+      "confidence": "high",
+      "sources": [
+        "uwmedicine.org",
+        "healthonline.washington.edu (UW Medicine patient education, clinic roster)"
+      ],
+      "verified_at": "2026-09-05"
+    },
+    {
+      "source": "uw-neighborhood-clinics",
+      "target": "nc-woodinville",
+      "relationship_type": "owns",
+      "confidence": "high",
+      "sources": [
+        "uwmedicine.org",
+        "healthonline.washington.edu (UW Medicine patient education, clinic roster)"
+      ],
+      "verified_at": "2026-09-05"
     }
   ]
 }

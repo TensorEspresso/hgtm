@@ -117,7 +117,7 @@ hs2/
 |---|---|---|---|---|---|---|
 | University of Michigan Health | 1,2 | 10 | 8 | 1 | 0 | Validated core |
 | UR Medicine | 1,2 | 12 | 5 | 0 | 6 | Validated core |
-| UW Medicine | 1,2 | 7 | 3 | 1 | 2 | Validated core |
+| UW Medicine | 1,2,3 | 22 | 18 | 1 | 2 | Validated core + clinic network (13 sites) |
 
 
 ---
