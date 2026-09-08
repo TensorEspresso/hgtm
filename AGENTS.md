@@ -7,21 +7,30 @@ Hierarchical Structure of Health Systems (HS2) — US health system hierarchy wi
 ```
 hs2/
 ├── README.md          ← model spec (tiers, relationship types, schemas)
+├── docs/              ← design docs (agentic validation pipeline, legal-entity judge)
+├── references/        ← model research (tier-system-research.md)
 ├── systems/           ← per health system
 │   ├── um-health/
 │   ├── ur-medicine/
 │   └── uw-medicine/
 │       ├── hierarchy.json
-│       └── hierarchy.png
+│       ├── hierarchy.png
+│       └── provenance.md ← artifact-level source map (+ sources/ captures)
+├── server/            ← interactive explorer (FastAPI; renders hierarchy.json)
+│   ├── app.py
+│   └── index.html
+├── trinity-health/    ← in-progress research notes (not yet a system)
 └── tools/             ← reusable scripts
-    └── generate_hierarchy.py
+    ├── generate_hierarchy.py
+    ├── validate_hierarchy.py
+    └── extract_uw_hierarchy.py
 ```
 
 ## Structural Invariants
 
 - Each system directory contains: `hierarchy.json`, `hierarchy.png`\n- `hierarchy.json` follows the schema in README.md
 - Entity fields: `id`, `name`, `type`, `tier`, `note` (required); `address` (required for physical types, omitted for non-physical); `addresses`, `service_area`, `brand_id`, `epic_id`, `fhir_endpoint` (optional)
-- Relationship fields: `source`, `target`, `relationship_type`, `confidence`, `sources`, `verified_at` (required); `note` (optional, only for `manages`/`partners_with`)
+- Relationship fields: `source`, `target`, `relationship_type`, `confidence`, `sources`, `verified_at` (required); `note` (optional, free text — commonly used on `owns` edges for acquisition context)
 - Relationship types: `owns`, `manages`, `partners_with`
 - Confidence levels: `high`, `medium`, `low`, `inferred`
 - Visualizations use dark theme with color-coded edges: green=owns, blue=manages, red=partners_with

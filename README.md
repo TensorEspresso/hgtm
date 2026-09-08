@@ -42,7 +42,7 @@ Loose affiliations (no contract, no equity) are **not** included.
 {
   "id": "unique-id",
   "name": "Facility Name",
-  "type": "hospital|specialty_center|clinic|health_system|physician_group|clinic_network|air_ambulance|...",
+  "type": "hospital|specialty_center|clinic|health_system|hospital_network|physician_group|clinic_network|air_ambulance|...",
   "tier": 0|1|2|3,
   "address": {
     "street": "...",
@@ -69,7 +69,7 @@ Loose affiliations (no contract, no equity) are **not** included.
 
 **Addressing rules:**
 
-- `address` = primary site (HQ for the system root). **Required** for physical types: `health_system`, `hospital`, `specialty_center`, `clinic`, `air_ambulance`. **Omitted** (absent, not null/empty) for non-physical types: `physician_group`, `clinic_network`, `program`, `brand`. Unknown types: warn only.
+- `address` = primary site (HQ for the system root). **Required** for physical types: `health_system`, `hospital`, `hospital_network`, `specialty_center`, `clinic`, `air_ambulance`. **Omitted** (absent, not null/empty) for non-physical types: `physician_group`, `clinic_network`, `program`, `brand`. Unknown types: warn only.
 - `addresses` (optional) = additional sites for multi-address entities. Each entry carries the same street/city/state/zip quartet plus an optional `label` (must be unique per entity). Entries must not duplicate the primary `address`.
 - `service_area` (optional string) = geographic footprint for entities whose reach is regional rather than fixed-site (e.g. `"WWAMI region"`). The natural counterpart for non-physical entities; also valid alongside a single HQ address (e.g. Airlift Northwest: HQ address + `service_area`).
 - Locations that are organizations in their own right (clinics, satellites, provider practices) are modeled as **Tier 3 entities**, never as bare address entries. Address data describes where an entity operates; it does not create entities.
@@ -84,7 +84,7 @@ Loose affiliations (no contract, no equity) are **not** included.
   "confidence": "high|medium|low|inferred",
   "sources": ["source-name", ...],
   "verified_at": "YYYY-MM-DD",
-  "note": "Optional context"
+  "note": "Optional context (free text; acquisition history on 'owns' is normal usage)"
 }
 ```
 
@@ -132,7 +132,7 @@ use, with no separate embedded copy.
 python3 server/app.py
 ```
 
-- **Endpoint:** `http://localhost:8646` (bound to 127.0.0.1)
+- **Endpoint:** `http://localhost:8646` (bound to 0.0.0.0 — LAN access on the home network)
 - **API:** `GET /api/systems` → list of systems · `GET /api/hierarchy?system=<id>` → that system's `hierarchy.json`
 - **UI:** collapsible tree built from the relationship graph, color-coded edges
   (green=owns, blue=manages, red=partners_with; solid/dashed/dotted per type), dynamic

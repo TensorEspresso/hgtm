@@ -103,7 +103,7 @@ Input: claim + entity context + previously tried queries and their failures. Out
 
 **Call B — Source selection.**
 Firecrawl `/search` returns ~10 URLs with titles/snippets. The LLM scores each by:
-- **Domain trust tier** (a maintained config table, not an LLM guess — see §6)
+- **Trust class** (deterministic `trust_class` computed upstream — not an LLM guess; see §6)
 - **Snippet relevance to this specific claim**
 
 Output: top 3 URLs + per-page instructions ("find the address block", "find ownership/partnership language"). Zero URLs passing the tier filter → claim goes `inconclusive`, no scrape.
@@ -203,7 +203,11 @@ gold/entities           — HS2 schema. Updated only on verdicts. Every field ca
 
 Budget: ~2–5 credits per claim. Caps + URL/day caching + the system-site corpus pattern keep per-system runs bounded.
 
-## 6. Source Tiering
+## 6. Source Trust
+
+**Superseded by the legal-entity judge v2 trust model** (`legal-entity-judge.md`): the maintained domain→tier config table does not scale to a national collection. The current model uses a deterministic `trust_class` — `gov` / `own_site` / `aggregator` / `unclassified` — computed upstream with a tiny stable allowlist/blocklist, LLM structural judgment (trust-by-structure, never content self-certification) on the unclassified long tail, and convergence-based confidence (independent registrable domains, no tier arithmetic). Build against the judge doc.
+
+Retired tier table (kept for the historical worked example in §7):
 
 | Tier | Sources | Handling |
 |---|---|---|

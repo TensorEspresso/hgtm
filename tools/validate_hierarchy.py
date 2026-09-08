@@ -11,7 +11,7 @@ Checks:
     non-physical types; 'addresses[]' full quartet, unique labels, no
     duplication of the primary address; 'service_area' string when present
   - Relationship required fields, valid enums, date format, dangling refs,
-    self-loops, duplicate edges, note restriction (manages/partners_with)
+    self-loops, duplicate edges
   - Graph invariants: single tier-0 'health_system' root, no orphans
   - Summary parity: declared counts match actual entity/relationship/tier/
     type/confidence distributions
@@ -27,7 +27,7 @@ import sys
 DATE_RE = re.compile(r'^\d{4}-\d{2}-\d{2}$')
 REL_TYPES = {'owns', 'manages', 'partners_with'}
 CONFIDENCE_LEVELS = {'high', 'medium', 'low', 'inferred'}
-PHYSICAL_TYPES = {'health_system', 'hospital', 'specialty_center', 'clinic', 'air_ambulance'}
+PHYSICAL_TYPES = {'health_system', 'hospital', 'hospital_network', 'specialty_center', 'clinic', 'air_ambulance'}
 NON_PHYSICAL_TYPES = {'physician_group', 'clinic_network', 'program', 'brand'}
 ADDR_FIELDS = ('street', 'city', 'state', 'zip')
 
@@ -126,8 +126,6 @@ def validate(data):
             errs.append(f"{key}: dangling target")
         if r.get('source') == r.get('target'):
             errs.append(f"{key}: self-loop")
-        if 'note' in r and r.get('relationship_type') == 'owns':
-            warns.append(f"{key}: 'note' on 'owns' (spec: manages/partners_with only)")
 
     # --- graph invariants ---
     if not ents:
